@@ -63,10 +63,10 @@ class WelcomePageState extends State<WelcomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const Text('Langauage:', style: TextStyle(color: darkText)),
+                const Text('Not choosing language here', style: TextStyle(color: darkText)),
                 Container(
                   margin: const EdgeInsets.only(left: 6),
-                  child: const Text('English >',
+                  child: const Text('SKR',
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.w500)),
                 )

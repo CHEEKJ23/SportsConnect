@@ -8,7 +8,7 @@ TextButton froyoTextBtn(String text, VoidCallback onPressed) {
       foregroundColor: Colors.white,
       backgroundColor: primaryColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(20),
       ),
     ),
     child: Text(text),
@@ -21,7 +21,7 @@ OutlinedButton froyoOutlinedBtn(String text, VoidCallback onPressed) {
     style: OutlinedButton.styleFrom(
       side: const BorderSide(color: primaryColor),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(20),
       ),
       foregroundColor: primaryColor,
     ),
