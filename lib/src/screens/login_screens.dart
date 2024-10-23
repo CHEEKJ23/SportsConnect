@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import './welcome_page.dart';
+import './dashboard.dart';
 import 'package:flutter/material.dart';
 import '../services/globals.dart';
 import '../services/auth_services.dart';
@@ -27,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const HomeScreen(),
+              builder: (BuildContext context) => const Dashboard(),
             ));
       } else {
         errorSnackBar(context, responseMap.values.first);
@@ -41,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.white,
           centerTitle: true,
           elevation: 0,
           title: const Text(
@@ -51,6 +52,15 @@ class _LoginScreenState extends State<LoginScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
+          leading: IconButton(
+    icon: const Icon(Icons.arrow_back, color: Colors.black), // Use an appropriate icon
+     onPressed: () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+      );
+    },
+  ),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),

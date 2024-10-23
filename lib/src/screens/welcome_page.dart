@@ -4,13 +4,17 @@ import 'package:page_transition/page_transition.dart';
 import '../shared/styles.dart';
 import '../shared/colors.dart';
 import '../shared/buttons.dart';
-import './singup_page.dart';
-import './signin_page.dart';
+// import './singup_page.dart';
+// import './signin_page.dart';
+import './login_screens.dart';
+import './register_screen.dart';
+
 
 class WelcomePage extends StatefulWidget {
-  final String pageTitle;
+  // final String pageTitle;
 
-  const WelcomePage({super.key, required this.pageTitle});
+  // const WelcomePage({super.key, required this.pageTitle});
+  const WelcomePage({Key? key}) : super(key: key);
 
   @override
   WelcomePageState createState() => WelcomePageState();
@@ -40,7 +44,7 @@ class WelcomePageState extends State<WelcomePage> {
                       alignment: Alignment.center,
                       type: PageTransitionType.rotate,
                       duration: const Duration(seconds: 1),
-                      child: SignInPage()));
+                      child: LoginScreen()));
             }),
           ),
           Container(
@@ -53,7 +57,7 @@ class WelcomePageState extends State<WelcomePage> {
                       alignment: Alignment.center,
                       type: PageTransitionType.rotate,
                       duration: const Duration(seconds: 1),
-                      child: SignUpPage()));
+                      child: RegisterScreen()));
               // Navigator.of(context).pushReplacementNamed('/signup');
             }),
           ),
