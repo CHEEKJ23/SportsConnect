@@ -7,8 +7,22 @@ import '../shared/product.dart';
 import '../shared/partials.dart';
 import './product_page.dart';
 
+List<String> imageFiles = [
+  'akara.png',
+  'coca-cola.png',
+  'hamburger.png',
+  'lemonade.png',
+  'pancake.png',
+  'pasta.png',
+  'strawberry.png', 
+  'tequila.png',
+  'vodka.png',
+  'welcome.png',
+];
+
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
+
 
   @override
   DashboardState createState() => DashboardState();
@@ -39,7 +53,7 @@ class DashboardState extends State<Dashboard> {
           ),
           backgroundColor: primaryColor,
           title:
-              const Text('Fryo', style: logoWhiteStyle, textAlign: TextAlign.center),
+              const Text('SportsConnect', style: logoWhiteStyle, textAlign: TextAlign.center),
           actions: <Widget>[
             IconButton(
               padding: const EdgeInsets.all(0),
@@ -58,8 +72,8 @@ class DashboardState extends State<Dashboard> {
         body: tabs[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Fryo.shop), label: 'Store'),
-            BottomNavigationBarItem(icon: Icon(Fryo.cart), label: 'My Cart'),
+            BottomNavigationBarItem(icon: Icon(Fryo.home), label: 'Home'),
+            BottomNavigationBarItem(icon: Icon(Fryo.hand), label: 'Chat'),
             BottomNavigationBarItem(
                 icon: Icon(Fryo.heart_1), label: 'Favourites'),
             BottomNavigationBarItem(icon: Icon(Fryo.user_1), label: 'Profile'),
@@ -135,6 +149,7 @@ Widget storeTab(BuildContext context) {
   ];
 
   return ListView(children: <Widget>[
+    HeaderTopCarouselWidget(),
     headerTopCategories(),
     deals('Hot Deals', onViewMore: () {}, items: <Widget>[
       foodItem(foods[0], onTapped: () {
@@ -235,7 +250,16 @@ Widget storeTab(BuildContext context) {
           ),
         );
       }, onLike: () {}),
-    ])
+    ]),
+    divider(),
+    sectionHeader('Featured', onViewMore: () {}),
+
+    ItemCard(),
+    ItemCard(),
+    ItemCard(),
+    ItemCard(),
+
+
   ]);
 }
 
@@ -245,11 +269,11 @@ Widget sectionHeader(String headerTitle, {onViewMore}) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       Container(
-        margin: const EdgeInsets.only(left: 15, top: 10),
+        margin: const EdgeInsets.only(left: 15, top: 10,bottom:0),
         child: Text(headerTitle, style: h4),
       ),
       Container(
-        margin: const EdgeInsets.only(left: 15, top: 2),
+        margin: const EdgeInsets.only(left: 15, top: 2,bottom:0),
         child: TextButton(
           onPressed: onViewMore,
           child: const Text('View all >', style: contrastText),
@@ -265,23 +289,36 @@ Widget headerTopCategories() {
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
-      sectionHeader('All Categories', onViewMore: () {}),
+      sectionHeader('Featured', onViewMore: () {}),
       SizedBox(
         height: 130,
         child: ListView(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           children: <Widget>[
-            headerCategoryItem('Frieds', Fryo.dinner, onPressed: () {}),
-            headerCategoryItem('Fast Food', Fryo.food, onPressed: () {}),
-            headerCategoryItem('Creamery', Fryo.poop, onPressed: () {}),
-            headerCategoryItem('Hot Drinks', Fryo.coffee_cup, onPressed: () {}),
-            headerCategoryItem('Vegetables', Fryo.leaf, onPressed: () {}),
+            headerCategoryItem('Booking', Fryo.book, onPressed: () {}),
+            headerCategoryItem('Rental', Fryo.move, onPressed: () {}),
+            headerCategoryItem('Deals', Fryo.money, onPressed: () {}),
+            headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
+            headerCategoryItem('Blogging', Fryo.history, onPressed: () {}),
           ],
         ),
       )
     ],
   );
+}
+
+Widget divider() {
+  return
+Padding(
+      padding: const EdgeInsets.only(top:10.0),
+      child: Divider(
+        color: Colors.grey, // The color of the line
+        thickness: 1,       // The thickness of the line
+        indent: 10,         // Optional: add padding before the line starts
+        endIndent: 10,      // Optional: add padding after the line ends
+      ),
+    );
 }
 
 Widget headerCategoryItem(String name, IconData icon, {onPressed}) {
@@ -306,7 +343,42 @@ Widget headerCategoryItem(String name, IconData icon, {onPressed}) {
       ],
     ),
   );
+
+
+
+
+
+}//carousel
+class HeaderTopCarouselWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        SizedBox(
+          height: 240,
+          child: CarouselView(
+            itemExtent: MediaQuery.of(context).size.width - 32,
+            itemSnapping: true,
+            elevation: 4,
+            padding: const EdgeInsets.all(8),
+            children: List.generate(imageFiles.length, (int index) {
+  return Container(
+    color: Colors.grey,
+    child: Image.asset(
+      'assets/images/${imageFiles[index]}', // Dynamically load each image from the list
+      fit: BoxFit.cover,
+    ),
+  );
+}),
+          ),
+        ),
+      ],
+    );
+  }
 }
+
 
 Widget deals(String dealTitle, {onViewMore, List<Widget>? items}) {
   return Container(
@@ -336,3 +408,74 @@ Widget deals(String dealTitle, {onViewMore, List<Widget>? items}) {
     ),
   );
 }
+
+// ItemCard
+class ItemCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    return 
+    Container(
+      
+      margin: const EdgeInsets.only(top: 5, right: 15, left: 15.0,bottom: 5),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey), // Border around the card
+        borderRadius: BorderRadius.circular(8), // Rounded corners
+      ),
+      padding: EdgeInsets.all(10), // Padding inside the card
+      width: 300, // Adjust the width as needed
+
+      child: Row(
+        children: [
+
+          // Image Placeholder
+          Container(
+            width: 80, // Image size
+            height: 80,
+            color: Colors.grey[300], // Background color of image placeholder
+            child: Icon(Icons.image, size: 40, color: Colors.black54), // Placeholder icon
+          ),
+          SizedBox(width: 10), // Space between image and text content
+
+          // Product Details
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            
+            children:[
+
+              Text(
+                'Yonex 100zz',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'RM 799',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Second hand',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+              Text(
+                'used for 1/2 year',
+                style: TextStyle(fontSize: 14, color: Colors.black54),
+              ),
+            ],
+            
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+// mhesham1@gmail.com

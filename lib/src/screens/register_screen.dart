@@ -10,6 +10,7 @@ import 'home_screen.dart';
 import './login_screens.dart';
 import './login_screens.dart';
 import './welcome_page.dart';
+import './dashboard.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -37,7 +38,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const HomeScreen(),
+              builder: (BuildContext context) => const Dashboard(),
             ));
       } else {
         errorSnackBar(context, responseMap.values.first[0]);
@@ -51,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
         title: const Text(
@@ -61,6 +62,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        leading: IconButton(
+    icon: const Icon(Icons.arrow_back, color: Colors.black), // Use an appropriate icon
+     onPressed: () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => WelcomePage()),
+      );
+    },
+  ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

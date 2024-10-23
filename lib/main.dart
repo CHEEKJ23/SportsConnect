@@ -44,7 +44,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const WelcomePage(pageTitle: 'Welcome'),
+      // home: const WelcomePage(pageTitle: 'Welcome'),
+
+      home: const WelcomePage(),
       routes: <String, WidgetBuilder>{
         '/signup': (BuildContext context) => SignUpPage(),
         '/signin': (BuildContext context) => SignInPage(),
