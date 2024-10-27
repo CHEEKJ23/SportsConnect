@@ -6,6 +6,7 @@ import '../shared/fryo_icons.dart';
 import '../shared/product.dart';
 import '../shared/partials.dart';
 import './product_page.dart';
+import '../booking/booking.dart';
 
 List<String> imageFiles = [
   'akara.png',
@@ -296,7 +297,18 @@ Widget headerTopCategories() {
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
           children: <Widget>[
-            headerCategoryItem('Booking', Fryo.book, onPressed: () {}),
+            // Booking Button
+            Builder(
+  builder: (context) {
+    return headerCategoryItem('Booking', Fryo.book, onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => BookingPage()),
+        );
+      },
+    );
+  },
+),
             headerCategoryItem('Rental', Fryo.move, onPressed: () {}),
             headerCategoryItem('Deals', Fryo.money, onPressed: () {}),
             headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
