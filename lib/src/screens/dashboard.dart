@@ -7,6 +7,8 @@ import '../shared/product.dart';
 import '../shared/partials.dart';
 import './product_page.dart';
 import '../booking/booking.dart';
+import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
+
 
 List<String> imageFiles = [
   'akara.png',
@@ -41,17 +43,16 @@ class DashboardState extends State<Dashboard> {
       const Text('Tab4'),
       const Text('Tab5'),
     ];
-
     return Scaffold(
         backgroundColor: bgColor,
         appBar: AppBar(
           centerTitle: true,
           elevation: 0,
-          leading: IconButton(
-            onPressed: () {},
-            iconSize: 21,
-            icon: const Icon(Fryo.funnel),
-          ),
+          // leading: IconButton(
+          //   onPressed: () {},
+          //   iconSize: 21,
+          //   icon: const Icon(Fryo.funnel),
+          // ),
           backgroundColor: primaryColor,
           title:
               const Text('SportsConnect', style: logoWhiteStyle, textAlign: TextAlign.center),
@@ -70,6 +71,8 @@ class DashboardState extends State<Dashboard> {
             )
           ],
         ),
+      drawer: myBooking.NavigationDrawer(),
+
         body: tabs[_selectedIndex],
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[

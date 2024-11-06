@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/dashboard.dart';
+import '../booking/booking2.dart';
 import '../shared/buttons.dart';
 import '../shared/input_fields.dart';
 import 'package:page_transition/page_transition.dart';
@@ -180,12 +181,44 @@ endTime = endTimeOfDay;
 });
 }
 },
+
 ), 
 ], 
         ),
-
       ]),
-    )); 
+    ),
+     bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () =>Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => Dashboard(),
+            )),
+              child: Text('Back'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () =>Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => SportCenterList(),
+            )),
+              child: Text('Next'),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ); 
   }
   
 }
+

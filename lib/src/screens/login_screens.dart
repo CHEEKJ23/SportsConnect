@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 import '../services/globals.dart';
 import '../services/auth_services.dart';
 import '../shared/rounded_button.dart';
+import '../shared/input_fields.dart';
 import 'package:http/http.dart' as http;
+import '../shared/buttons.dart';
+import '../shared/colors.dart';
 
 import 'home_screen.dart';
 
@@ -41,6 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: bgColor,
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -69,22 +73,15 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextField(
-                decoration: const InputDecoration(
-                  hintText: 'Enter your email',
-                ),
+              fryoEmailInput('Enter your Email',
                 onChanged: (value) {
                   _email = value;
                 },
               ),
               const SizedBox(
-                height: 30,
+                height: 10,
               ),
-              TextField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: 'Enter your password',
-                ),
+              fryoEmailInput( 'Enter your password',
                 onChanged: (value) {
                   _password = value;
                 },
@@ -92,6 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(
                 height: 30,
               ),
+
               RoundedButton(
                 btnText: 'LOG IN',
                 onBtnPressed: () => loginPressed(),

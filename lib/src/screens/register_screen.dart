@@ -4,13 +4,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../services/globals.dart';
 import '../services/auth_services.dart';
-
+import '../shared/input_fields.dart';
 import '../shared/rounded_button.dart';
 import 'home_screen.dart';
 import './login_screens.dart';
-import './login_screens.dart';
 import './welcome_page.dart';
 import './dashboard.dart';
+import '../shared/buttons.dart';
+import '../shared/colors.dart';
+
 
 import 'package:http/http.dart' as http;
 
@@ -51,6 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: bgColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
@@ -79,40 +82,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
             const SizedBox(
               height: 20,
             ),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Name',
-              ),
+            
+            fryoEmailInput('Name',
               onChanged: (value) {
                 _name = value;
               },
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Email',
-              ),
+           fryoEmailInput('Email',
               onChanged: (value) {
                 _email = value;
               },
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
-            TextField(
-              obscureText: true,
-              decoration: const InputDecoration(
-                hintText: 'Password',
-              ),
+            fryoEmailInput('Password',
               onChanged: (value) {
                 _password = value;
               },
             ),
             const SizedBox(
-              height: 40,
+              height: 20,
             ),
+
             RoundedButton(
               btnText: 'Create Account',
               onBtnPressed: () => createAccountPressed(),

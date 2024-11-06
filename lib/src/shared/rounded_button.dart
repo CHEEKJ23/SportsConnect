@@ -11,14 +11,17 @@ class RoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: 5,
-      color: Colors.black,
-      borderRadius: BorderRadius.circular(30),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(40),
+      ),
+      color: Color.fromARGB(255, 101, 109, 102),
+      // borderRadius: BorderRadius.circular(30),
       child: MaterialButton(
         onPressed: () {
           onBtnPressed();
         },
-        minWidth: 320,
-        height: 60,
+        minWidth: 220,
+        height: 40,
         child: Text(
           btnText,
           style: const TextStyle(color: Colors.white, fontSize: 20),
@@ -27,3 +30,4 @@ class RoundedButton extends StatelessWidget {
     );
   }
 }
+
