@@ -8,6 +8,8 @@ import '../shared/buttons.dart';
 // import './signin_page.dart';
 import './login_screens.dart';
 import './register_screen.dart';
+import './dashboard.dart';
+
 
 
 class WelcomePage extends StatefulWidget {
@@ -38,26 +40,27 @@ class WelcomePageState extends State<WelcomePage> {
             width: 200,
             margin: const EdgeInsets.only(bottom: 0),
             child: froyoTextBtn('Sign In', () {
-              Navigator.pushReplacement(
-                  context,
-                  PageTransition(
-                      alignment: Alignment.center,
-                      type: PageTransitionType.rotate,
-                      duration: const Duration(seconds: 1),
-                      child: LoginScreen()));
+              // Navigator.pushReplacement(
+              //     context,
+              //     PageTransition(
+              //         alignment: Alignment.center,
+              //         type: PageTransitionType.rotate,
+              //         duration: const Duration(seconds: 1),
+              //         child: LoginScreen()
+              //         ));
             }),
           ),
           Container(
             width: 200,
             padding: const EdgeInsets.all(0),
             child: froyoOutlinedBtn('Sign Up', () {
-              Navigator.pushReplacement(
-                  context,
-                  PageTransition(
-                      alignment: Alignment.center,
-                      type: PageTransitionType.rotate,
-                      duration: const Duration(seconds: 1),
-                      child: RegisterScreen()));
+              // Navigator.pushReplacement(
+              //     context,
+              //     PageTransition(
+              //         alignment: Alignment.center,
+              //         type: PageTransitionType.rotate,
+              //         duration: const Duration(seconds: 1),
+              //         child: RegisterScreen()));
               // Navigator.of(context).pushReplacementNamed('/signup');
             }),
           ),
@@ -76,7 +79,20 @@ class WelcomePageState extends State<WelcomePage> {
                 )
               ],
             ),
-          )
+          ),
+           Container(
+            width: 200,
+            margin: const EdgeInsets.only(bottom: 0),
+            child: froyoTextBtn('shortcut', () {
+              Navigator.pushReplacement(
+                  context,
+                  PageTransition(
+                      alignment: Alignment.center,
+                      type: PageTransitionType.rotate,
+                      duration: const Duration(seconds: 1),
+                      child: Dashboard()));
+            }),
+          ),
         ],
       )),
       backgroundColor: bgColor,

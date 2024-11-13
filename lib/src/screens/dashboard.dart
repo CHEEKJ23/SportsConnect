@@ -8,6 +8,9 @@ import '../shared/partials.dart';
 import './product_page.dart';
 import '../booking/booking.dart';
 import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
+import '../rental/rental.dart';
+import '../deals/deal.dart';
+import '../deals/deal2.dart';
 
 
 List<String> imageFiles = [
@@ -312,8 +315,25 @@ Widget headerTopCategories() {
     );
   },
 ),
-            headerCategoryItem('Rental', Fryo.move, onPressed: () {}),
-            headerCategoryItem('Deals', Fryo.money, onPressed: () {}),
+Builder(
+  builder: (context) {
+    return headerCategoryItem('Rental', Fryo.move, onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RentalPage()),
+        );
+      },
+    );
+  },
+),
+
+            Builder(
+              builder: (context) {
+                return headerCategoryItem('Deals', Fryo.money, onPressed: () {
+                   _showDealsDialog(context);
+                });
+              }
+            ),
             headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
             headerCategoryItem('Blogging', Fryo.history, onPressed: () {}),
           ],
@@ -322,6 +342,39 @@ Widget headerTopCategories() {
     ],
   );
 }
+
+ void _showDealsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Choose an Option"),
+          content: Text("Would you like to Sell or Buy?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ItemListPage()),
+        );
+              },
+              child: Text("Buy"),
+            ),
+            TextButton(
+              onPressed: () {
+                 Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CreateItemPage()),
+        );
+              },
+              child: Text("Sell"),
+            ),
+          ],
+        );
+      },
+    );
+ }
+
 
 Widget divider() {
   return
