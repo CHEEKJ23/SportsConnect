@@ -12,6 +12,12 @@ import '../rental/rental.dart';
 import '../deals/deal.dart';
 import '../deals/deal2.dart';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/cubits/cubits.dart';
+import 'package:shop/screens/screens.dart';
+import 'package:flutter_login/flutter_login.dart';
+import 'package:shop/src/screens/dashboard.dart';
 
 List<String> imageFiles = [
   'akara.png',
@@ -334,7 +340,18 @@ Builder(
                 });
               }
             ),
-            headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
+
+
+
+
+            Builder(
+              builder: (context) {
+                return headerCategoryItem('Chat', Fryo.list, onPressed: () {
+                   Navigator.of(context).pushNamed(ChatListScreen.routeName);
+                });
+              }
+            ),
+            // headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
             headerCategoryItem('Blogging', Fryo.history, onPressed: () {}),
           ],
         ),

@@ -38,9 +38,9 @@ class MyApp extends StatelessWidget {
         RepositoryProvider<AuthRepository>(
           create: (_) => AuthRepository(),
         ),
-        // RepositoryProvider<ChatRepository>(
-        //   create: (_) => ChatRepository(),
-        // ),
+        RepositoryProvider<ChatRepository>(
+          create: (_) => ChatRepository(),
+        ),
         RepositoryProvider<ChatMessageRepository>(
           create: (_) => ChatMessageRepository(),
         ),
@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: SplashScreen.routeName,
+          initialRoute: GuestScreen.routeName,
           routes: {
             SplashScreen.routeName: (_) => const SplashScreen(),
             GuestScreen.routeName: (_) => const GuestScreen(),

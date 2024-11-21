@@ -114,11 +114,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
         chatBloc.add(const ChatStarted());
         userBloc.add(const UserStarted());
 
-        LaravelEcho.init(token: authBloc.state.token!);
+        // LaravelEcho.init(token: authBloc.state.token!);
         // setupOneSignal(authBloc.state.user!.id);
       },
       onDisposed: () {
-        LaravelEcho.instance.disconnect();
+        // LaravelEcho.instance.disconnect();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -133,6 +133,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
+              
             ],
           ),
           actions: [
@@ -192,7 +193,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
             },
           ),
         ),
+        
         floatingActionButton:
+        
             BlocSelector<UserBloc, UserState, List<UserEntity>>(
           selector: (state) {
             return state.map(
@@ -206,7 +209,11 @@ class _ChatListScreenState extends State<ChatListScreen> {
               child: const Icon(Icons.search),
             );
           },
+          
         ),
+        
+
+        
       ),
     );
   }
@@ -256,10 +263,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
           title: Text(user.name),
           subtitle: Text(user.email),
           onTap: () {
-            /// selected user
+          
             context.read<ChatBloc>().add(UserSelected(user));
 
-            /// push to chat screen
+          
             Navigator.of(context).pushNamed(ChatScreen.routeName);
           },
         ),

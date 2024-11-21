@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop/cubits/cubits.dart';
 import 'package:shop/screens/screens.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:shop/src/screens/dashboard.dart';
 
 class GuestScreen extends StatelessWidget {
   const GuestScreen({super.key});
@@ -16,7 +17,7 @@ class GuestScreen extends StatelessWidget {
     return FlutterLogin(
       scrollable: true,
       hideForgotPasswordButton: true,
-      title: 'Easy Chat App',
+      title: 'SportsConnect',
       theme: LoginTheme(
         titleStyle: const TextStyle(
           fontSize: 24,
@@ -25,7 +26,7 @@ class GuestScreen extends StatelessWidget {
         pageColorDark: Colors.blue,
         pageColorLight: Colors.blue.shade300,
       ),
-      logo: const AssetImage('assets/images/chat.png'),
+      logo: const AssetImage('assets/images/hamburger.png'),
       onLogin: cubit.signIn,
       onSignup: cubit.signUp,
       userValidator: (value) {
@@ -41,8 +42,15 @@ class GuestScreen extends StatelessWidget {
         return null;
       },
       onSubmitAnimationCompleted: () {
-        Navigator.of(context).pushReplacementNamed(ChatListScreen.routeName);
+        // Navigator.of(context).pushReplacementNamed(ChatListScreen.routeName);
+                Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const Dashboard(),
+            ));
+
       },
+      
       onRecoverPassword: (_) async => null,
     );
   }

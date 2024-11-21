@@ -73,18 +73,18 @@ class _SportsCenterLayoutState extends State<SportsCenterLayout> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            ElevatedButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => SportCenterList(),
-                ),
-              ),
-              child: Text('Back'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
-            ),
+            // ElevatedButton(
+            //   // onPressed: () => Navigator.push(
+            //   //   context,
+            //   //   MaterialPageRoute(
+            //   //     builder: (BuildContext context) => SportCenterList(),
+            //   //   ),
+            //   // ),
+            //   child: Text('Back'),
+            //   style: ElevatedButton.styleFrom(
+            //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            //   ),
+            // ),
             ElevatedButton(
               onPressed: () => _showConfirmationPrompt(context),
               child: Text('Next'),

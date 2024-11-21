@@ -7,7 +7,9 @@ import 'package:page_transition/page_transition.dart';
 import '../shared/styles.dart';
 import '../shared/colors.dart';
 import '../shared/rounded_button.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookingPage extends StatefulWidget {
   @override
@@ -21,7 +23,67 @@ class _BookingPageState extends State<BookingPage> {
   TimeOfDay? startTime ;
   TimeOfDay? endTime;
 
+Future<void> storeToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('authToken', token); // Ensure the key is 'authToken'
+}
 
+Future<void> searchSportCenters() async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/search-sport-centers');
+    // final token = '52|qwKbWDT2b88B3UQQ3P0OcUDMmGewyBbVVXvDwIGL'; 
+
+    // try {
+    //   final response = await http.post(
+    //     url,
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Authorization': 'Bearer $token',
+    //     },
+    try {
+   
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken'); 
+
+    if (token == null) {
+      throw Exception('No authentication token found');
+    }
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token', // Include the token here
+      },
+        body: jsonEncode({
+          'sportType': selectedSport,
+          'location': location,
+          'date': selectedDate?.toIso8601String(),
+          'startTime': '${startTime?.hour}:${startTime?.minute}',
+          'endTime': '${endTime?.hour}:${endTime?.minute}',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SportCenterList(data), // Pass data to next screen
+          ),
+        );
+      } else {
+        print('Error: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch sport centers.')),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred.')),
+      );
+    }
+  }
   final List<String> sports = ['Tennis', 'Soccer', 'Basketball'];
 
 // Function to open the date picker and select a date
@@ -141,11 +203,16 @@ onPressed: () async {
 final TimeOfDay? startTimeOfDay = await showTimePicker(
 context: context,
 initialTime: startTime ?? TimeOfDay.now(),
+
 initialEntryMode: TimePickerEntryMode.dial,
 );
 if (startTimeOfDay != null) {
 setState(() {
-startTime = startTimeOfDay;
+// startTime = startTimeOfDay;
+int adjustedStartMinutes = (startTimeOfDay.minute < 15 || startTimeOfDay.minute >= 45)
+          ? 0
+          : 30;
+      startTime = TimeOfDay(hour: startTimeOfDay.hour, minute: adjustedStartMinutes);
 });
 }
 },
@@ -177,7 +244,11 @@ initialEntryMode: TimePickerEntryMode.dial,
 );
 if (endTimeOfDay != null) {
 setState(() {
-endTime = endTimeOfDay;
+// endTime = endTimeOfDay;
+int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
+          ? 0
+          : 30;
+      endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: adjustedEndMinutes);
 });
 }
 },
@@ -204,11 +275,7 @@ endTime = endTimeOfDay;
               ),
             ),
             ElevatedButton(
-              onPressed: () =>Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => SportCenterList(),
-            )),
+              onPressed: searchSportCenters,
               child: Text('Next'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),

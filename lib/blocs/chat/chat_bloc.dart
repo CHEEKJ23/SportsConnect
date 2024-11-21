@@ -115,7 +115,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           chatId: event.chatId,
           message: event.message.text,
         ),
-        event.socketId,
+        ''
       );
 
       if (result.success) {

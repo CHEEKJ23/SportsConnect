@@ -16,16 +16,12 @@ class ChatMessageRepository extends BaseChatMessageRepository {
   @override
   Future<AppResponse<ChatMessageEntity?>> createChatMessage(
     CreateChatMessageRequest request,
-    String socketId,
+    String socketId, // Add this parameter to match the base class
   ) async {
     final response = await _dioClient.post(
       Endpoints.createChatMessage,
       data: request.toJson(),
-      options: Options(
-        headers: {
-          'X-Socket-ID': socketId,
-        },
-      ),
+      // You can ignore the socketId if you don't need it
     );
 
     return AppResponse<ChatMessageEntity?>.fromJson(

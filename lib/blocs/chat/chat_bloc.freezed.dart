@@ -23,8 +23,7 @@ mixin _$ChatEvent {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -37,8 +36,7 @@ mixin _$ChatEvent {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -51,8 +49,7 @@ mixin _$ChatEvent {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -168,8 +165,7 @@ class _$ChatStartedImpl implements ChatStarted {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -185,8 +181,7 @@ class _$ChatStartedImpl implements ChatStarted {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -202,8 +197,7 @@ class _$ChatStartedImpl implements ChatStarted {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -347,8 +341,7 @@ class _$ChatResetImpl implements ChatReset {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -364,8 +357,7 @@ class _$ChatResetImpl implements ChatReset {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -381,8 +373,7 @@ class _$ChatResetImpl implements ChatReset {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -545,8 +536,7 @@ class _$UserSelectedImpl implements UserSelected {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -562,8 +552,7 @@ class _$UserSelectedImpl implements UserSelected {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -579,8 +568,7 @@ class _$UserSelectedImpl implements UserSelected {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -704,8 +692,7 @@ class _$GetChatMessageImpl implements GetChatMessage {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -721,8 +708,7 @@ class _$GetChatMessageImpl implements GetChatMessage {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -738,8 +724,7 @@ class _$GetChatMessageImpl implements GetChatMessage {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -856,8 +841,7 @@ class _$LoadMoreChatMessageImpl implements LoadMoreChatMessage {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -873,8 +857,7 @@ class _$LoadMoreChatMessageImpl implements LoadMoreChatMessage {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -890,8 +873,7 @@ class _$LoadMoreChatMessageImpl implements LoadMoreChatMessage {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -967,7 +949,7 @@ abstract class _$$SendMessageImplCopyWith<$Res> {
           _$SendMessageImpl value, $Res Function(_$SendMessageImpl) then) =
       __$$SendMessageImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int chatId, ChatMessage message, String socketId});
+  $Res call({int chatId, ChatMessage message});
 }
 
 /// @nodoc
@@ -985,7 +967,6 @@ class __$$SendMessageImplCopyWithImpl<$Res>
   $Res call({
     Object? chatId = null,
     Object? message = null,
-    Object? socketId = null,
   }) {
     return _then(_$SendMessageImpl(
       null == chatId
@@ -996,10 +977,6 @@ class __$$SendMessageImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as ChatMessage,
-      socketId: null == socketId
-          ? _value.socketId
-          : socketId // ignore: cast_nullable_to_non_nullable
-              as String,
     ));
   }
 }
@@ -1007,18 +984,16 @@ class __$$SendMessageImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$SendMessageImpl implements SendMessage {
-  const _$SendMessageImpl(this.chatId, this.message, {required this.socketId});
+  const _$SendMessageImpl(this.chatId, this.message);
 
   @override
   final int chatId;
   @override
   final ChatMessage message;
-  @override
-  final String socketId;
 
   @override
   String toString() {
-    return 'ChatEvent.sendMessage(chatId: $chatId, message: $message, socketId: $socketId)';
+    return 'ChatEvent.sendMessage(chatId: $chatId, message: $message)';
   }
 
   @override
@@ -1027,13 +1002,11 @@ class _$SendMessageImpl implements SendMessage {
         (other.runtimeType == runtimeType &&
             other is _$SendMessageImpl &&
             (identical(other.chatId, chatId) || other.chatId == chatId) &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.socketId, socketId) ||
-                other.socketId == socketId));
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, chatId, message, socketId);
+  int get hashCode => Object.hash(runtimeType, chatId, message);
 
   /// Create a copy of ChatEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1051,13 +1024,12 @@ class _$SendMessageImpl implements SendMessage {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
   }) {
-    return sendMessage(chatId, message, socketId);
+    return sendMessage(chatId, message);
   }
 
   @override
@@ -1068,13 +1040,12 @@ class _$SendMessageImpl implements SendMessage {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
   }) {
-    return sendMessage?.call(chatId, message, socketId);
+    return sendMessage?.call(chatId, message);
   }
 
   @override
@@ -1085,15 +1056,14 @@ class _$SendMessageImpl implements SendMessage {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
     required TResult orElse(),
   }) {
     if (sendMessage != null) {
-      return sendMessage(chatId, message, socketId);
+      return sendMessage(chatId, message);
     }
     return orElse();
   }
@@ -1153,12 +1123,11 @@ class _$SendMessageImpl implements SendMessage {
 }
 
 abstract class SendMessage implements ChatEvent {
-  const factory SendMessage(final int chatId, final ChatMessage message,
-      {required final String socketId}) = _$SendMessageImpl;
+  const factory SendMessage(final int chatId, final ChatMessage message) =
+      _$SendMessageImpl;
 
   int get chatId;
   ChatMessage get message;
-  String get socketId;
 
   /// Create a copy of ChatEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -1252,8 +1221,7 @@ class _$ChatSelectedImpl implements ChatSelected {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -1269,8 +1237,7 @@ class _$ChatSelectedImpl implements ChatSelected {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -1286,8 +1253,7 @@ class _$ChatSelectedImpl implements ChatSelected {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -1450,8 +1416,7 @@ class _$AddNewMessageImpl implements AddNewMessage {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -1467,8 +1432,7 @@ class _$AddNewMessageImpl implements AddNewMessage {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -1484,8 +1448,7 @@ class _$AddNewMessageImpl implements AddNewMessage {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -1640,8 +1603,7 @@ class _$ChatNotificationOpenedImpl implements ChatNotificationOpened {
     required TResult Function(UserEntity user) userSelected,
     required TResult Function() getChatMessage,
     required TResult Function() loadMoreChatMessage,
-    required TResult Function(int chatId, ChatMessage message, String socketId)
-        sendMessage,
+    required TResult Function(int chatId, ChatMessage message) sendMessage,
     required TResult Function(ChatEntity chat) chatSelected,
     required TResult Function(ChatMessageEntity message) addNewMessage,
     required TResult Function(int chatId) chatNotificationOpened,
@@ -1657,8 +1619,7 @@ class _$ChatNotificationOpenedImpl implements ChatNotificationOpened {
     TResult? Function(UserEntity user)? userSelected,
     TResult? Function()? getChatMessage,
     TResult? Function()? loadMoreChatMessage,
-    TResult? Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult? Function(int chatId, ChatMessage message)? sendMessage,
     TResult? Function(ChatEntity chat)? chatSelected,
     TResult? Function(ChatMessageEntity message)? addNewMessage,
     TResult? Function(int chatId)? chatNotificationOpened,
@@ -1674,8 +1635,7 @@ class _$ChatNotificationOpenedImpl implements ChatNotificationOpened {
     TResult Function(UserEntity user)? userSelected,
     TResult Function()? getChatMessage,
     TResult Function()? loadMoreChatMessage,
-    TResult Function(int chatId, ChatMessage message, String socketId)?
-        sendMessage,
+    TResult Function(int chatId, ChatMessage message)? sendMessage,
     TResult Function(ChatEntity chat)? chatSelected,
     TResult Function(ChatMessageEntity message)? addNewMessage,
     TResult Function(int chatId)? chatNotificationOpened,
@@ -2095,3 +2055,4 @@ abstract class _ChatState extends ChatState {
   _$$ChatStateImplCopyWith<_$ChatStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
