@@ -5,6 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:shop/blocs/blocs.dart';
 import 'package:shop/repositories/auth/auth_repository.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'guest_state.dart';
 part 'guest_cubit.freezed.dart';
@@ -12,6 +13,12 @@ part 'guest_cubit.freezed.dart';
 class GuestCubit extends Cubit<GuestState> {
   final AuthRepository _authRepository;
   final AuthBloc _authBloc;
+
+  
+  Future<void> storeToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('authToken', token); 
+  }
 
   GuestCubit({
     required AuthRepository authRepository,
@@ -27,6 +34,7 @@ class GuestCubit extends Cubit<GuestState> {
       LoginRequest(email: data.name, password: data.password),
     );
     if (response.success) {
+      await storeToken(response.data!.token);
       _authBloc.add(Authenticated(
         isAuthenticated: true,
         token: response.data!.token,
@@ -67,4 +75,5 @@ class GuestCubit extends Cubit<GuestState> {
       token: null,
     ));
   }
+
 }

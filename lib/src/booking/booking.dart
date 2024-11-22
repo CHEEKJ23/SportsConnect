@@ -10,8 +10,12 @@ import '../shared/rounded_button.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/cubits/guest/guest_cubit.dart';
+import 'package:intl/intl.dart';
 
 class BookingPage extends StatefulWidget {
+  static const routeName = "booking";
+
   @override
   _BookingPageState createState() => _BookingPageState();
 }
@@ -23,14 +27,9 @@ class _BookingPageState extends State<BookingPage> {
   TimeOfDay? startTime ;
   TimeOfDay? endTime;
 
-Future<void> storeToken(String token) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setString('authToken', token); // Ensure the key is 'authToken'
-}
-
 Future<void> searchSportCenters() async {
     final url = Uri.parse('http://10.0.2.2:8000/api/search-sport-centers');
-    // final token = '52|qwKbWDT2b88B3UQQ3P0OcUDMmGewyBbVVXvDwIGL'; 
+    // final token = '58|xAOUuy6E7jZjG7LdA9CQZepRGVGbgWSXMZAb7r8c'; 
 
     // try {
     //   final response = await http.post(
@@ -47,17 +46,17 @@ Future<void> searchSportCenters() async {
     if (token == null) {
       throw Exception('No authentication token found');
     }
-
+final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(selectedDate!) : null;
     final response = await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Include the token here
+        'Authorization': 'Bearer $token', 
       },
         body: jsonEncode({
           'sportType': selectedSport,
           'location': location,
-          'date': selectedDate?.toIso8601String(),
+          'date': formattedDate,
           'startTime': '${startTime?.hour}:${startTime?.minute}',
           'endTime': '${endTime?.hour}:${endTime?.minute}',
         }),
@@ -65,14 +64,34 @@ Future<void> searchSportCenters() async {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        print('$data');
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (context) => SportCenterList(data['sportsCenters']), 
+        //   ),
+        // );
+        if (data is List) {
+        List<Map<String, dynamic>> sportsCenters = List<Map<String, dynamic>>.from(data);
+
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SportCenterList(data), // Pass data to next screen
+            builder: (context) => SportCenterList(sportsCenters),
           ),
         );
       } else {
+        throw Exception('Unexpected data format');
+      }
+      } else {
         print('Error: ${response.body}');
+        print('Selected Sport: $selectedSport');
+print('Location: $location');
+print('Date: $formattedDate');
+print('Start Time: ${startTime?.hour}:${startTime?.minute}');
+print('End Time: ${endTime?.hour}:${endTime?.minute}');
+        print(response.statusCode);
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to fetch sport centers.')),
         );
@@ -210,7 +229,7 @@ if (startTimeOfDay != null) {
 setState(() {
 // startTime = startTimeOfDay;
 int adjustedStartMinutes = (startTimeOfDay.minute < 15 || startTimeOfDay.minute >= 45)
-          ? 0
+          ? 00
           : 30;
       startTime = TimeOfDay(hour: startTimeOfDay.hour, minute: adjustedStartMinutes);
 });

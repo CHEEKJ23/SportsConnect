@@ -5,19 +5,9 @@ import '../booking/booking3.dart';
 
 
 class SportCenterList extends StatelessWidget {
-  // final List<Map<String, String>> sportsCenters = [
-  //   {
-  //     'name': 'Pro one Sports Center',
-  //     'priceRange': 'RM16-22',
-  //     'description': 'Description\nDescription'
-  //   },
-  //   {
-  //     'name': 'Impian Sports World',
-  //     'priceRange': 'RM15-25',
-  //     'description': 'Description\nDescription'
-  //   },
-  //   // Add more items if needed
-  // ];
+  static const routeName = "sportCenterList";
+
+
   final List<Map<String, dynamic>> sportsCenters;
 SportCenterList(this.sportsCenters);
   @override
@@ -87,6 +77,7 @@ SportCenterList(this.sportsCenters);
               itemCount: sportsCenters.length,
               itemBuilder: (context, index) {
                 final item = sportsCenters[index];
+                print('Item at index $index: $item');
                 return Card(
                   margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   child: Padding(
@@ -96,15 +87,15 @@ SportCenterList(this.sportsCenters);
                       children: [
                         // Larger image container
                         Container(
-                          width: double.infinity,
-                          height: 200,
-                          color: Colors.grey[300],
-                          child: Icon(
-                            Icons.image,
-                            size: 100,
-                            color: Colors.grey[500],
-                          ), // Image icon placeholder
-                        ),
+                             width: double.infinity,
+                             height: 200,
+                             decoration: BoxDecoration(
+                               image: DecorationImage(
+                                 image: NetworkImage(item['image'] ?? ''),
+                                 fit: BoxFit.cover,
+                               ),
+                             ),
+                           ),
                         SizedBox(height: 8.0),
                         // Sports Center Name
                         Text(
@@ -118,7 +109,7 @@ SportCenterList(this.sportsCenters);
                         SizedBox(height: 4.0),
                         // Price Range
                         Text(
-                          item['priceRange'] ?? 'N/A',
+                          item['price'] ?? 'N/A',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,

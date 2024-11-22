@@ -16,6 +16,9 @@ import 'package:shop/screens/screens.dart';
 import 'package:shop/screens/splash/splash_screen.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shop/src/booking/booking2.dart';
+import 'package:shop/src/booking/booking.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,6 +83,8 @@ class MyApp extends StatelessWidget {
             GuestScreen.routeName: (_) => const GuestScreen(),
             ChatListScreen.routeName: (_) => const ChatListScreen(),
             ChatScreen.routeName: (_) => const ChatScreen(),
+            // BookingPage.routeName: (_) => BookingPage(),
+            // SportCenterList.routeName: (_) =>  SportCenterList([]),
           },
         ),
       ),
