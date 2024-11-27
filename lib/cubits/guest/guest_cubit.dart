@@ -20,6 +20,11 @@ class GuestCubit extends Cubit<GuestState> {
     await prefs.setString('authToken', token); 
   }
 
+ Future<void> storeUserId(int userId) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('userId', userId);
+}
+
   GuestCubit({
     required AuthRepository authRepository,
     required AuthBloc authBloc,
@@ -35,6 +40,7 @@ class GuestCubit extends Cubit<GuestState> {
     );
     if (response.success) {
       await storeToken(response.data!.token);
+      await storeUserId(response.data!.user.id);
       _authBloc.add(Authenticated(
         isAuthenticated: true,
         token: response.data!.token,

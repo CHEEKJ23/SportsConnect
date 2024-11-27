@@ -35,6 +35,7 @@ dependencies:
   http: ^0.13.3
   shared_preferences: ^2.0.6
   image_picker: ^0.8.5+3
+  # flutter_local_notifications: ^12.0.0
 # start here
   flutter_bloc: ^8.1.1
   flutter_login: ^4.0.0

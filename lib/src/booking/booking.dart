@@ -47,6 +47,7 @@ Future<void> searchSportCenters() async {
       throw Exception('No authentication token found');
     }
 final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(selectedDate!) : null;
+
     final response = await http.post(
       url,
       headers: {
@@ -74,6 +75,16 @@ final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(sel
         if (data is List) {
         List<Map<String, dynamic>> sportsCenters = List<Map<String, dynamic>>.from(data);
 
+ sportsCenters = sportsCenters.map((center) {
+      return {
+        ...center,
+        'sportType': selectedSport ?? 'Unknown Sport',
+        'date': formattedDate ?? 'Unknown Date',
+        'startTime': '${startTime?.hour ?? '00'}:${startTime?.minute ?? '00'}',
+        'endTime': '${endTime?.hour ?? '00'}:${endTime?.minute ?? '00'}',
+      };
+    }).toList();
+
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -86,10 +97,10 @@ final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(sel
       } else {
         print('Error: ${response.body}');
         print('Selected Sport: $selectedSport');
-print('Location: $location');
-print('Date: $formattedDate');
-print('Start Time: ${startTime?.hour}:${startTime?.minute}');
-print('End Time: ${endTime?.hour}:${endTime?.minute}');
+        print('Location: $location');
+        print('Date: $formattedDate');
+        print('Start Time: ${startTime?.hour}:${startTime?.minute}');
+        print('End Time: ${endTime?.hour}:${endTime?.minute}');
         print(response.statusCode);
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -103,7 +114,7 @@ print('End Time: ${endTime?.hour}:${endTime?.minute}');
       );
     }
   }
-  final List<String> sports = ['Tennis', 'Soccer', 'Basketball'];
+  // final List<String> sports = ['Tennis', 'Soccer', 'Basketball'];
 
 // Function to open the date picker and select a date
   Future<void> _selectDate(BuildContext context) async {
@@ -140,28 +151,36 @@ print('End Time: ${endTime?.hour}:${endTime?.minute}');
             //   },
             //   items: sports,
             // ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            border: Border.all(
-                color: Color.fromARGB(255, 101, 109, 102), style: BorderStyle.solid, width: 0.80),
-          ),
-              child: DropdownButton<String>(
-                value: selectedSport,
-                hint: Text('Select Sport'),
-                onChanged: (value) {
-                  setState(() {
-                    selectedSport = value;
-                  });
-                },
-                items: sports.map<DropdownMenuItem<String>>((String sport) {
-                  return DropdownMenuItem<String>(
-                    value: sport,
-                    child: Text(sport),
-                  );
-                }).toList(),
-              ),
+          //   Container(
+          //     padding: EdgeInsets.symmetric(horizontal: 10.0),
+          // decoration: BoxDecoration(
+          //   borderRadius: BorderRadius.circular(15.0),
+          //   border: Border.all(
+          //       color: Color.fromARGB(255, 101, 109, 102), style: BorderStyle.solid, width: 0.80),
+          // ),
+          //     child: DropdownButton<String>(
+          //       value: selectedSport,
+          //       hint: Text('Select Sport'),
+          //       onChanged: (value) {
+          //         setState(() {
+          //           selectedSport = value;
+          //         });
+          //       },
+          //       items: sports.map<DropdownMenuItem<String>>((String sport) {
+          //         return DropdownMenuItem<String>(
+          //           value: sport,
+          //           child: Text(sport),
+          //         );
+          //       }).toList(),
+          //     ),
+          //   ),
+          fryoTextInput(
+              'Sport Type',
+              onChanged: (value) {
+                setState(() {
+                  selectedSport = value;
+                });
+              },
             ),
             SizedBox(height: 16.0),
             // Custom input field for location
@@ -207,7 +226,10 @@ print('End Time: ${endTime?.hour}:${endTime?.minute}');
       Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget> [
+
+    
 Text("${startTime?.hour ?? '--'}: ${startTime?.minute ?? '--'}"),
+
 ElevatedButton(
   style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -231,9 +253,11 @@ setState(() {
 int adjustedStartMinutes = (startTimeOfDay.minute < 15 || startTimeOfDay.minute >= 45)
           ? 00
           : 30;
-      startTime = TimeOfDay(hour: startTimeOfDay.hour, minute: adjustedStartMinutes);
+startTime = TimeOfDay(hour: startTimeOfDay.hour, minute: adjustedStartMinutes);
+      
 });
 }
+
 },
 ), 
 ], 
@@ -263,10 +287,11 @@ initialEntryMode: TimePickerEntryMode.dial,
 );
 if (endTimeOfDay != null) {
 setState(() {
-// endTime = endTimeOfDay;
+endTime = endTimeOfDay;
 int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
-          ? 0
+          ? 00
           : 30;
+          
       endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: adjustedEndMinutes);
 });
 }
@@ -275,6 +300,13 @@ int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
 ), 
 ], 
         ),
+        SizedBox(height: 16,),
+                Row(children: [
+          Text(
+      "Note: The system will only accept times at 00 or 30 minutes.",
+      style: TextStyle(fontSize: 13, color: Colors.grey),
+),
+        ],),
       ]),
     ),
      bottomNavigationBar: Padding(

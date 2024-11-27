@@ -1,16 +1,29 @@
 import 'package:flutter/material.dart';
 import '../screens/dashboard.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/blocs/blocs.dart';
+import 'package:shop/cubits/cubits.dart';
+import 'package:shop/screens/screens.dart';
+import 'package:shop/screens/guest/guest_screen.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/src/booking/bookingCountdown.dart';
 
-void main() => runApp(MyApp());
+// import 'package:onesignal_flutter/onesignal_flutter.dart';
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MyBookingsPage(),
-    );
-  }
-}
+
+// void main() => runApp(MyApp());
+
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: MyBookingsPage(),
+//     );
+//   }
+// }
 class NavigationDrawer extends StatelessWidget {
   const NavigationDrawer({super.key});
 
@@ -29,6 +42,9 @@ class NavigationDrawer extends StatelessWidget {
     );
   }
   Widget buildHeader(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
+    final currentUser = authBloc.state.user!;
+
     return InkWell(
        onTap: (){
               Navigator.pop(context);
@@ -48,15 +64,15 @@ class NavigationDrawer extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 52,
-              backgroundImage: NetworkImage('https://mir-s3-cdn-cf.behance.net/project_modules/hd/1744a191472915.5e329f4376330.jpg'),
+              backgroundImage: NetworkImage('https://t4.ftcdn.net/jpg/00/65/77/27/360_F_65772719_A1UV5kLi5nCEWI0BNLLiFaBPEkUbv5Fv.jpg'),
             ),
             SizedBox(height: 12),
             Text(
-              'Thomas Shelby', 
+              "${currentUser.name}", 
               style: TextStyle(fontSize: 28,color: Colors.black),
             ),
             Text(
-              'By Order Of the Peaky Blinders',
+              "${currentUser.email}", 
               style: TextStyle(fontSize: 16, color:Colors.black),
             )
           ],
@@ -98,139 +114,168 @@ class NavigationDrawer extends StatelessWidget {
           ),ListTile(
             leading: Icon(Icons.book_online),
             title: const Text('Booking'),
-            onTap: (){},
+            onTap: (){
+Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => MyBookingsPage()), 
+ );
+
+            },
           ),ListTile(
             leading: Icon(Icons.car_rental),
             title: const Text('Rental'),
             onTap: (){},
           ),ListTile(
-            leading: Icon(Icons.sell),
-            title: const Text('Sell'),
-            onTap: (){},
+            leading: Icon(Icons.logout),
+            title: const Text('Log Out'),
+            onTap: (){
+            context.read<GuestCubit>().signOut();
+             Navigator.pushReplacement(
+   context,
+   MaterialPageRoute(builder: (context) => GuestScreen()), 
+ );
+            },
           ),
         ],
       ),
     );
   }
 }
-
-class MyBookingsPage extends StatelessWidget {
+class MyBookingsPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My Bookings'),
-      ),
-      drawer: const NavigationDrawer(),
-
-      body: ListView.builder(
-        padding: const EdgeInsets.all(8.0),
-        itemCount: 3, // Number of bookings
-        itemBuilder: (context, index) {
-          return BookingItem(
-            label: 'Label',
-            title: 'Booking ${index + 1}',
-            description: 'Description Description',
-            onCancel: () {
-              // Handle cancel action here
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Booking ${index + 1} cancelled')),
-              );
-            },
-          );
-        },
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () =>Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Dashboard(),
-            )),
-              child: Text('Home'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  _MyBookingsPageState createState() => _MyBookingsPageState();
 }
 
-class BookingItem extends StatelessWidget {
-  final String label;
-  final String title;
-  final String description;
-  final VoidCallback onCancel;
-
-  const BookingItem({
-    required this.label,
-    required this.title,
-    required this.description,
-    required this.onCancel,
-  });
+class _MyBookingsPageState extends State<MyBookingsPage> {
+  List<dynamic> bookings = [];
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              color: Colors.grey[300],
-              child: Icon(Icons.image, size: 40, color: Colors.grey[600]),
-            ),
-            SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                  ),
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: onCancel,
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.red),
-              ),
-              style: TextButton.styleFrom(
-                side: BorderSide(color: Colors.red),
-              ),
-            ),
-            
-          ],
-          
-        ),
-        
-      ),
-      
-    );
-    
+  void initState() {
+    super.initState();
+    fetchBookings();
   }
+
+  Future<void> fetchBookings() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+
+    if (token == null) {
+      // Handle missing token, e.g., redirect to login
+      return;
+    }
+
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/myBookings'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+     if (response.statusCode == 200) {
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    if (responseData['status'] == 'success') {
+      setState(() {
+        bookings = responseData['bookings']; // Extract the bookings list
+      });
+    } else {
+      // Handle unexpected response structure
+      print('Unexpected response format');
+    }
+  } else {
+    // Handle error
+    print('Failed to load bookings');
+  }
+  }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('My Bookings'),
+    ),
+    body: bookings.isEmpty
+        ? Center(
+            child: Text(
+              'No bookings made.',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+          )
+        : ListView.builder(
+            itemCount: bookings.length,
+            itemBuilder: (context, index) {
+              final booking = bookings[index];
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Booking ID: ${booking['id']}',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Date: ${booking['date']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Time: ${booking['startTime']} - ${booking['endTime']}',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Sport Center: ${booking['sport_center_name']}',
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                      ),
+                      Text(
+                        'Sport Type: ${booking['sport_type_name']}',
+                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+                      ),
+                      SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                     Navigator.pop(context);
+//               Navigator.push(
+//             context,
+//             MaterialPageRoute(
+//               builder: (BuildContext context) => BookingCountdown(
+//   bookingDate: booking['date'], // Pass the booking date
+//   startTime: booking['startTime'], // Pass the start time
+// ),
+//             ));
+                  },
+                  child: Text('View Countdown'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your logic for the second button here
+                  },
+                  child: Text('Button 2'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    // Add your logic for the third button here
+                  },
+                  child: Text('Button 3'),
+                ),
+              ],
+            ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+  );
+}
 }

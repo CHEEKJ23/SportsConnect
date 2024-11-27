@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../shared/colors.dart';
 import '../booking/booking3.dart';
 import '../rental/myRental.dart';
+import '../screens/dashboard.dart';
 
 
 
@@ -32,7 +33,7 @@ class _RentalPaymentMethodScreenState extends State<RentalPaymentMethodScreen> {
           onPressed: () =>Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => SportsCenterApp(),
+              builder: (BuildContext context) => Dashboard(),
             )),
         ),
       ),
