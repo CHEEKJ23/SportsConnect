@@ -10,6 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/src/booking/bookingCountdown.dart';
+import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
+import '../booking/testNotification.dart';
+import '../booking/testNotifyButton.dart';
+import '../rental/myRental.dart';
+
+import '../booking/updateBooking.dart';//side bar drawer is here
 
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -100,9 +106,14 @@ class NavigationDrawer extends StatelessWidget {
           ),
           const Divider(color:Colors.black26),
           ListTile(
-            leading: Icon(Icons.favorite_border),
-            title: const Text('Favourite'),
-            onTap: (){},
+            leading: Icon(Icons.notification_important),
+            title: const Text('Test Notification'),
+            onTap: (){
+              Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => testNotifyButton()), 
+ );
+            },
           ),ListTile(
             leading: Icon(Icons.workspace_premium_outlined),
             title: const Text('Workflow'),
@@ -124,7 +135,12 @@ Navigator.push(
           ),ListTile(
             leading: Icon(Icons.car_rental),
             title: const Text('Rental'),
-            onTap: (){},
+            onTap: (){
+              Navigator.pushReplacement(
+   context,
+   MaterialPageRoute(builder: (context) => MyRentalsPage()), 
+ );
+            },
           ),ListTile(
             leading: Icon(Icons.logout),
             title: const Text('Log Out'),
@@ -189,93 +205,154 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
   }
 
 @override
+
 Widget build(BuildContext context) {
+  final now = DateTime.now();
+
+  // Separate bookings into upcoming and completed
+  List<dynamic> upcomingBookings = bookings.where((booking) {
+    DateTime bookingEndTime = DateTime.parse("${booking['date']} ${booking['endTime']}");
+    return bookingEndTime.isAfter(now);
+  }).toList();
+
+  List<dynamic> completedBookings = bookings.where((booking) {
+    DateTime bookingEndTime = DateTime.parse("${booking['date']} ${booking['endTime']}");
+    return bookingEndTime.isBefore(now);
+  }).toList();
+
   return Scaffold(
+    drawer: myBooking.NavigationDrawer(),
     appBar: AppBar(
       title: Text('My Bookings'),
     ),
-    body: bookings.isEmpty
+   body: bookings.isEmpty
         ? Center(
             child: Text(
-              'No bookings made.',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              "No booking made",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           )
-        : ListView.builder(
-            itemCount: bookings.length,
-            itemBuilder: (context, index) {
-              final booking = bookings[index];
-              return Card(
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                elevation: 4,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Booking ID: ${booking['id']}',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Date: ${booking['date']}',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      Text(
-                        'Time: ${booking['startTime']} - ${booking['endTime']}',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Sport Center: ${booking['sport_center_name']}',
-                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
-                      ),
-                      Text(
-                        'Sport Type: ${booking['sport_type_name']}',
-                        style: TextStyle(fontSize: 14, color: Colors.blueGrey),
-                      ),
-                      SizedBox(height: 16),
+          : ListView(
+      children: [
+        // Upcoming Bookings
+        if (upcomingBookings.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'Upcoming Bookings',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          ...upcomingBookings.map((booking) => _buildBookingCard(booking, isUpcoming: true)).toList(),
+        ],
+
+        // Divider for History
+        if (completedBookings.isNotEmpty) ...[
+          Divider(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              'History',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          ...completedBookings.map((booking) => _buildBookingCard(booking, isUpcoming: false)).toList(),
+        ],
+      ],
+    ),
+  );
+}
+
+// Helper method to build a booking card
+Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
+  return Card(
+    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+    elevation: 4,
+    child: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Booking ID: ${booking['id']}',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Date: ${booking['date']}',
+            style: TextStyle(fontSize: 14),
+          ),
+          Text(
+            'Time: ${booking['startTime']} - ${booking['endTime']}',
+            style: TextStyle(fontSize: 14),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Sport Center: ${booking['sport_center_name']}',
+            style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+          ),
+          Text(
+            'Sport Type: ${booking['sport_type_name']}',
+            style: TextStyle(fontSize: 14, color: Colors.blueGrey),
+          ),
+          if (isUpcoming) ...[
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ElevatedButton(
                   onPressed: () {
                      Navigator.pop(context);
-//               Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (BuildContext context) => BookingCountdown(
-//   bookingDate: booking['date'], // Pass the booking date
-//   startTime: booking['startTime'], // Pass the start time
-// ),
-//             ));
+              Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => BookingCountdown(
+  bookingDate: booking['date'], 
+  startTime: booking['startTime'], 
+  endTime: booking['endTime'],
+),
+            ));
                   },
-                  child: Text('View Countdown'),
+                  child: Icon(Icons.access_time_sharp),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    // Add your logic for the second button here
+                   onPressed: () {
+                    // Navigate to UpdateBookingPage
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdateBookingPage(
+                          bookingId: booking['id'],
+                          initialDate: DateTime.parse(booking['date']),
+                          initialStartTime: TimeOfDay(
+                            hour: int.parse(booking['startTime'].split(':')[0]),
+                            minute: int.parse(booking['startTime'].split(':')[1]),
+                          ),
+                          initialEndTime: TimeOfDay(
+                            hour: int.parse(booking['endTime'].split(':')[0]),
+                            minute: int.parse(booking['endTime'].split(':')[1]),
+                          ),
+                        ),
+                      ),
+                    );
                   },
-                  child: Text('Button 2'),
+                  child: Icon(Icons.edit),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     // Add your logic for the third button here
                   },
-                  child: Text('Button 3'),
+                  child: Icon(Icons.cancel),
                 ),
               ],
             ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+          ],
+        ],
+      ),
+    ),
   );
 }
 }

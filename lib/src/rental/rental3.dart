@@ -1,82 +1,191 @@
 import 'package:flutter/material.dart';
-import '../screens/dashboard.dart';
-import '../booking/booking2.dart';
-import '../shared/buttons.dart';
-import '../shared/input_fields.dart';
-import 'package:page_transition/page_transition.dart';
-import '../shared/styles.dart';
-import '../shared/colors.dart';
-import '../shared/rounded_button.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../rental/rental2.dart';
-import '../rental/rental4.dart';
-import '../rental/rental.dart';
+class RentalDetails {
+  final int sportCenterId;
+  final String date;
+  final String startTime;
+  final String endTime;
+  int? equipmentID;
+  int? quantityRented;
 
+  RentalDetails({
+    required this.sportCenterId,
+    required this.date,
+    required this.startTime,
+    required this.endTime,
+    this.equipmentID,
+    this.quantityRented,
+  });
 
-// void main() => runApp(MyApp());
+  void setEquipmentID(int id) {
+    equipmentID = id;
+  }
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: ItemDetailPage(),
-//     );
-//   }
-// }
-
-
-List<String> imageFiles = [
-  'akara.png',
-  'coca-cola.png',
-  'hamburger.png',
-  'lemonade.png',
-  'pancake.png',
-  'pasta.png',
-  'strawberry.png', 
-  'tequila.png',
-  'vodka.png',
-  'welcome.png',
-];
+  void setQuantityRented(int quantity) {
+    quantityRented = quantity;
+  }
+}
 
 class ItemDetailPage extends StatelessWidget {
+  final Map<String, dynamic> equipmentDetails;
+  final RentalDetails rentalDetails;
+
+  ItemDetailPage({Key? key, required this.equipmentDetails, required this.rentalDetails}) : super(key: key);
+
+  Future<void> rentEquipment(BuildContext context) async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/rent');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      // Debug: Print the data being sent
+      print('Sending rental request with the following data:');
+      print('Sport Center ID: ${rentalDetails.sportCenterId}');
+      print('Equipment ID: ${rentalDetails.equipmentID}');
+      print('Date: ${rentalDetails.date}');
+      print('Start Time: ${rentalDetails.startTime}');
+      print('End Time: ${rentalDetails.endTime}');
+      print('Quantity Rented: ${rentalDetails.quantityRented}');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'sport_center_id': rentalDetails.sportCenterId,
+          'equipmentID': rentalDetails.equipmentID,
+          'date': rentalDetails.date,
+          'startTime': rentalDetails.startTime,
+          'endTime': rentalDetails.endTime,
+          'quantity_rented': rentalDetails.quantityRented,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'])),
+        );
+      } else {
+        final errorData = json.decode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorData['message'] ?? 'Failed to rent equipment.')),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred.')),
+      );
+    }
+  }
+
+  void _showQuantityDialog(BuildContext context) {
+    final TextEditingController quantityController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Select Quantity to Rent"),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Available: ${equipmentDetails['quantity_available']} items"),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: quantityController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      labelText: "Enter quantity",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                int? inputQuantity = int.tryParse(quantityController.text);
+                if (inputQuantity == null || inputQuantity <= 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Please enter a valid quantity.")),
+                  );
+                } else if (inputQuantity > equipmentDetails['quantity_available']) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Quantity exceeds available items.")),
+                  );
+                } else {
+                  Navigator.of(context).pop(); // Close dialog
+                  rentalDetails.setEquipmentID(equipmentDetails['equipmentID']);
+                  rentalDetails.setQuantityRented(inputQuantity);
+                  rentEquipment(context);
+                }
+              },
+              child: Text("Confirm"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
-            Icon(Icons.sports_volleyball),
             SizedBox(width: 8),
-            Text("Volleyball"),
+            Text(equipmentDetails['name']),
           ],
         ),
       ),
       body: Padding(
-        
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Image carousel placeholder
-              Stack(
-                
+            Stack(
               children: [
-                HeaderTopCarouselWidget(),
-                
+                // Placeholder for image carousel
+                Container(
+                  height: 200,
+                  color: Colors.grey[300],
+                  child: Center(child: Text("Image Carousel")),
+                ),
                 Positioned(
-                  top:110,
+                  top: 110,
                   left: 16,
                   child: Icon(Icons.arrow_back_ios, color: Colors.black),
                 ),
                 Positioned(
-                  top:110,
-
+                  top: 110,
                   right: 16,
                   child: Icon(Icons.arrow_forward_ios, color: Colors.black),
                 ),
               ],
             ),
-
             SizedBox(height: 16),
             // Price and deposit details
             Row(
@@ -90,7 +199,7 @@ class ItemDetailPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                     Text(
-                      "RM 20 / hour",
+                      "RM ${equipmentDetails['price_per_hour']} / hour",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -103,7 +212,7 @@ class ItemDetailPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                     Text(
-                      "RM 10",
+                      "RM ${equipmentDetails['deposit_amount']}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -112,17 +221,21 @@ class ItemDetailPage extends StatelessWidget {
             ),
             SizedBox(height: 16),
             // Description section
-            Column(
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Description",
                   style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud\"",
-                  style: TextStyle(fontSize: 14),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    equipmentDetails['description'] ?? 'No description available.',
+                    style: TextStyle(fontSize: 14),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
@@ -139,7 +252,7 @@ class ItemDetailPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                     Text(
-                      "Good",
+                      equipmentDetails['condition'],
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -152,7 +265,7 @@ class ItemDetailPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                     Text(
-                      "6 left",
+                      "${equipmentDetails['quantity_available']} left",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -165,11 +278,11 @@ class ItemDetailPage extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                 _showQuantityDialog(context);
+                  _showQuantityDialog(context);
                 },
                 child: Text(
                   "Rent",
-                  style: TextStyle(fontSize: 16,color: Colors.white)
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -184,113 +297,55 @@ class ItemDetailPage extends StatelessWidget {
   }
 }
 
-class HeaderTopCarouselWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          height: 240,
-          child: CarouselView(
-            itemExtent: MediaQuery.of(context).size.width - 2,
-            itemSnapping: true,
-            elevation: 2,
-            padding: const EdgeInsets.all(8),
-            children: List.generate(imageFiles.length, (int index) {
-  return Container(
-    color: Colors.white,
-    child: Image.asset(
-      'assets/images/${imageFiles[index]}', // Dynamically load each image from the list
-      fit: BoxFit.contain,
-    ),
-  );
-}),
-          ),
-        ),
-      ],
-    );
-  }
-}
+// class HeaderTopCarouselWidget extends StatelessWidget {
+//   final List<dynamic> images;
 
-// Function to show the quantity selection dialog
-  void _showQuantityDialog(BuildContext context) {
-    int selectedQuantity = 1; // Default selected quantity
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Select Quantity to Rent"),
-          content: StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("Available: 6 items"), // Display available quantity
-                  SizedBox(height: 8),
-                  DropdownButton<int>(
-                    value: selectedQuantity,
-                    items: List.generate(6, (index) => index + 1)
-                        .map((quantity) {
-                      return DropdownMenuItem<int>(
-                        value: quantity,
-                        child: Text(quantity.toString()),
-                      );
-                    }).toList(),
-                    onChanged: (int? value) {
-                      setState(() {
-                        selectedQuantity = value!;
-                      });
-                    },
-                  ),
-                ],
-              );
-            },
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-              },
-              child: Text("Cancel"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                _showConfirmationMessage(context, selectedQuantity);
-              },
-              child: Text("Confirm"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+//   HeaderTopCarouselWidget({required this.images});
 
-  // Function to show a confirmation message after selection
-  void _showConfirmationMessage(BuildContext context, int quantity) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Booking Confirmed"),
-          content: Text("You have rented $quantity items."),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => RentalPaymentApp(),
-                ),
-              ),
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       mainAxisAlignment: MainAxisAlignment.center,
+//       crossAxisAlignment: CrossAxisAlignment.center,
+//       children: <Widget>[
+//         SizedBox(
+//           height: 240,
+//           child: CarouselView(
+//             itemExtent: MediaQuery.of(context).size.width - 2,
+//             itemSnapping: true,
+//             elevation: 2,
+//             padding: const EdgeInsets.all(8),
+//             children: List.generate(images.length, (int index) {
+//               return Container(
+//                 color: Colors.white,
+//                 child: Image.network(
+//                   images[index], // Load each image from the network
+//                   fit: BoxFit.contain,
+//                 ),
+//               );
+//             }),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+
+
+
+
+   // Positioned(
+                //   top:110,
+                //   left: 16,
+                //   child: Icon(Icons.arrow_back_ios, color: Colors.black),
+                // ),
+                // Positioned(
+                //   top:110,
+
+                //   right: 16,
+                //   child: Icon(Icons.arrow_forward_ios, color: Colors.black),
+                // ),
+                //  HeaderTopCarouselWidget(images: equipmentDetails['images']),
 
 
 

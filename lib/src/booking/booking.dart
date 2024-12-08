@@ -249,7 +249,7 @@ initialEntryMode: TimePickerEntryMode.dial,
 );
 if (startTimeOfDay != null) {
 setState(() {
-// startTime = startTimeOfDay;
+startTime = startTimeOfDay;
 int adjustedStartMinutes = (startTimeOfDay.minute < 15 || startTimeOfDay.minute >= 45)
           ? 00
           : 30;
@@ -288,11 +288,11 @@ initialEntryMode: TimePickerEntryMode.dial,
 if (endTimeOfDay != null) {
 setState(() {
 endTime = endTimeOfDay;
-int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
-          ? 00
-          : 30;
+// int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
+//           ? 00
+//           : 30;
           
-      endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: adjustedEndMinutes);
+      endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: endTimeOfDay.minute);
 });
 }
 },

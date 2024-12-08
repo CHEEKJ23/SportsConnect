@@ -1,31 +1,11 @@
 import 'package:flutter/material.dart';
-import '../booking/booking.dart';
-import '../booking/booking3.dart';
-import '../screens/dashboard.dart';
-import '../rental/rental3.dart';
+import 'rental3.dart'; // Ensure this import points to the file where RentalDetails and ItemDetailPage are defined
 
+class EquipmentList extends StatelessWidget {
+  final List<dynamic> availableEquipment;
+  final Map<String, dynamic> rentalDetails;
 
-class EquipmentList extends StatefulWidget {
-  const EquipmentList({super.key});
-
-  @override
-  State<EquipmentList> createState() => _EquipmentListState();
-}
-
-class _EquipmentListState extends State<EquipmentList> {
-  final List<Map<String, String>> sportsCenters = [
-    {
-      'name': 'Ping Pong Racket',
-      'priceRange': 'RM10/hour',
-      'description': 'Description\nDescription'
-    },
-    {
-      'name': 'Volley Ball',
-      'priceRange': 'RM20/hour',
-      'description': 'Description\nDescription'
-    },
-    // Add more items if needed
-  ];
+  EquipmentList({Key? key, required this.availableEquipment, required this.rentalDetails}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +14,11 @@ class _EquipmentListState extends State<EquipmentList> {
         title: Text('Available Equipment'),
       ),
       body: ListView.builder(
-        itemCount: sportsCenters.length,
+        itemCount: availableEquipment.length,
         itemBuilder: (context, index) {
-          final item = sportsCenters[index];
+          final equipment = availableEquipment[index];
+          final equipmentID = equipment['equipmentID'] as int?;
+
           return Card(
             margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Padding(
@@ -44,17 +26,8 @@ class _EquipmentListState extends State<EquipmentList> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Larger image container
-                  Container(
-                    width: double.infinity,
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 100), // Image icon placeholder
-                  ),
-                  SizedBox(height: 8.0),
-                  // Text content below the image
                   Text(
-                    item['name']!,
+                    equipment['name'] ?? 'Unknown',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 16.0,
@@ -63,38 +36,18 @@ class _EquipmentListState extends State<EquipmentList> {
                   ),
                   SizedBox(height: 4.0),
                   Text(
-                    item['priceRange']!,
+                    'Available: ${equipment['quantity_available'] ?? 'N/A'}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16.0,
                     ),
                   ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    item['description']!,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-
-                    children: [
-                      ElevatedButton(
-                                    onPressed: () =>Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (BuildContext context) => ItemDetailPage(),
-                                  )),
-                                    child: Text('Select'),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                                      
-                                    ),
-                                  ),
-                    ],
-                    
+                  SizedBox(height: 8.0),
+                  ElevatedButton(
+                    onPressed: equipmentID != null
+                        ? () => navigateToItemDetailPage(context, equipment, rentalDetails)
+                        : null, // Disable button if ID is null
+                    child: Text('View Details'),
                   ),
                 ],
               ),
@@ -102,37 +55,30 @@ class _EquipmentListState extends State<EquipmentList> {
           );
         },
       ),
-      // Bottom buttons
-      // bottomNavigationBar: Padding(
-      //   padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: [
-      //       ElevatedButton(
-      //         onPressed: () =>Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (BuildContext context) => BookingPage(),
-      //       )),
-      //         child: Text('Back'),
-      //         style: ElevatedButton.styleFrom(
-      //           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      //         ),
-      //       ),
-      //       ElevatedButton(
-      //         onPressed: () =>Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (BuildContext context) => SportsCenterLayout(),
-      //       )),
-      //         child: Text('Next'),
-      //         style: ElevatedButton.styleFrom(
-      //           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
+    );
+  }
+
+  void navigateToItemDetailPage(BuildContext context, Map<String, dynamic> equipment, Map<String, dynamic> rentalDetailsMap) {
+    final rentalDetails = RentalDetails(
+      sportCenterId: rentalDetailsMap['sport_center_id'] ?? 0,
+      date: rentalDetailsMap['date'] ?? '',
+      startTime: rentalDetailsMap['startTime'] ?? '',
+      endTime: rentalDetailsMap['endTime'] ?? '',
+      equipmentID: equipment['equipmentID'], // Optional, can be null
+      quantityRented: equipment['quantity_rented'], // Optional, can be null
+    );
+
+    // Debug: Print the rental details being passed
+    print('Passing rentalDetails: $rentalDetails');
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ItemDetailPage(
+          equipmentDetails: equipment,
+          rentalDetails: rentalDetails,
+        ),
+      ),
     );
   }
 }

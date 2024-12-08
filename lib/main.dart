@@ -18,8 +18,54 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shop/src/booking/booking2.dart';
 import 'package:shop/src/booking/booking.dart';
+// import 'package:workmanager/workmanager.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
+// @pragma('vm:entry-point') // Required for obfuscation or Flutter 3.1+
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) async {
+//     print("Executing task: $task");
+
+//     // Example logic to check if a booking has started
+//     bool bookingStarted = checkIfBookingStarted();
+
+//     if (bookingStarted) {
+//       await showNotification('Booking Started', 'Your booking has started!');
+//     }
+
+//     return Future.value(true);
+//   });
+// }
+
+// Future<void> showNotification(String title, String body) async {
+//   const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//       AndroidNotificationDetails(
+//     'booking_channel_id',
+//     'Booking Notifications',
+//     channelDescription: 'Notifications for booking events',
+//     importance: Importance.max,
+//     priority: Priority.high,
+//   );
+
+//   const NotificationDetails platformChannelSpecifics =
+//       NotificationDetails(android: androidPlatformChannelSpecifics);
+
+//   await flutterLocalNotificationsPlugin.show(
+//     0, // Notification ID
+//     title,
+//     body,
+//     platformChannelSpecifics,
+//   );
+// }
+
+// bool checkIfBookingStarted() {
+//   // Implement your logic to check if a booking has started
+//   return false; // Replace with actual logic
+// }
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HydratedBloc.storage = await HydratedStorage.build(
@@ -27,6 +73,21 @@ void main() async {
         ? HydratedStorage.webStorageDirectory
         : await getTemporaryDirectory(),
   );
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //  Workmanager().initialize(callbackDispatcher, isInDebugMode: true);
+  // Workmanager().registerOneOffTask("task-identifier", "simpleTask");
+
+  // // Initialize Flutter Local Notifications
+  // const AndroidInitializationSettings initializationSettingsAndroid =
+  //     AndroidInitializationSettings('@mipmap/ic_launcher');
+
+  // const InitializationSettings initializationSettings =
+  //     InitializationSettings(
+  //   android: initializationSettingsAndroid,
+  // );
+
+  // await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
   runApp(const MyApp());
 }
 

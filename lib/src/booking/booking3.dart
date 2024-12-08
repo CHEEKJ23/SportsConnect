@@ -150,8 +150,14 @@ Future<void> fetchAvailableCourts() async {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
-            // Checkbox list for available slots
-            _buildAvailableSlots(),
+            availableSlots.isEmpty
+              ? Center(
+                  child: Text(
+                    'No courts available.',
+                    style: TextStyle(fontSize: 16, color: Colors.red),
+                  ),
+                )
+              : _buildAvailableSlots(),
           ],
         ),
       ),

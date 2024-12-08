@@ -7,10 +7,19 @@ import 'package:page_transition/page_transition.dart';
 import '../shared/styles.dart';
 import '../shared/colors.dart';
 import '../shared/rounded_button.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import '../rental/rental2.dart';
 
 
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'rental2.dart'; // Ensure this import points to the file where EquipmentList is defined
 
 class RentalPage extends StatefulWidget {
   @override
@@ -21,24 +30,111 @@ class _RentalPageState extends State<RentalPage> {
   String? selectedEquipment;
   String location = '';
   DateTime? selectedDate;
-  TimeOfDay? startTime ;
+  TimeOfDay? startTime;
   TimeOfDay? endTime;
+  List<dynamic> sportsCenters = [];
+  List<dynamic> availableEquipment = [];
+  String? selectedSportCenter;
+  int? selectedSportCenterId;
 
+  Future<void> fetchSportsCenters(String location) async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/get-sports-centers?location=$location');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
 
-  final List<String> sports = ['Badminton Racquet', 'Ping Pong Racquet', 'Basketball'];
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
 
-// Function to open the date picker and select a date
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-    );
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-      });
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          sportsCenters = data;
+        });
+      } else {
+        print('Error: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch sports centers.')),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred.')),
+      );
+    }
+  }
+
+  Future<void> checkAvailability() async {
+    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/check-availability');
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+
+      final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(selectedDate!) : null;
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'sport_center_name': selectedSportCenter,
+          'equipment_name': selectedEquipment,
+          'date': formattedDate,
+          'startTime': '${startTime?.hour}:${startTime?.minute}',
+          'endTime': '${endTime?.hour}:${endTime?.minute}',
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          availableEquipment = data['available_equipment'];
+        });
+
+        final rentalDetails = {
+          'sport_center_id': selectedSportCenterId,
+          'date': formattedDate,
+          'startTime': '${startTime?.hour}:${startTime?.minute}',
+          'endTime': '${endTime?.hour}:${endTime?.minute}',
+        };
+
+        // Navigate to EquipmentList with available equipment and rental details
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EquipmentList(
+              availableEquipment: availableEquipment,
+              rentalDetails: rentalDetails,
+            ),
+          ),
+        );
+      } else {
+        print('Error: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to check availability.')),
+        );
+      }
+    } catch (error) {
+      print('Error: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred.')),
+      );
     }
   }
 
@@ -46,182 +142,142 @@ class _RentalPageState extends State<RentalPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rent an Equipment'),
+        title: Text('Rent Equipment'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // CustomDropdown(
-            //   value: selectedSport,
-            //   hint: 'Select Sport',
-            //   onChanged: (value) {
-            //     setState(() {
-            //       selectedSport = value;
-            //     });
-            //   },
-            //   items: sports,
-            // ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.0),
-            border: Border.all(
-                color: Color.fromARGB(255, 101, 109, 102), style: BorderStyle.solid, width: 0.80),
-          ),
-              child: DropdownButton<String>(
-                value: selectedEquipment,
-                hint: Text('Select equipment'),
-                onChanged: (value) {
-                  setState(() {
-                    selectedEquipment = value;
-                  });
-                },
-                items: sports.map<DropdownMenuItem<String>>((String sport) {
-                  return DropdownMenuItem<String>(
-                    value: sport,
-                    child: Text(sport),
-                  );
-                }).toList(),
-              ),
+            fryoTextInput(
+              'Equipment',
+              onChanged: (value) {
+                setState(() {
+                  selectedEquipment = value;
+                });
+              },
             ),
-            SizedBox(height: 16.0),
-            // Custom input field for location
             fryoTextInput(
               'Location',
               onChanged: (value) {
                 setState(() {
                   location = value;
                 });
+                if (value.isNotEmpty) {
+                  fetchSportsCenters(value);
+                } else {
+                  setState(() {
+                    sportsCenters = [];
+                  });
+                }
               },
             ),
-            SizedBox(height: 16.0),
-          
-    // Date Picker
+            if (sportsCenters.isNotEmpty)
+              DropdownButton<String>(
+                hint: Text('Select Sport Center'),
+                value: selectedSportCenter,
+                onChanged: (value) {
+                  setState(() {
+                    selectedSportCenter = value;
+                    selectedSportCenterId = sportsCenters.firstWhere(
+                      (center) => center['name'] == value,
+                      orElse: () => {'id': null},
+                    )['id'];
+                  });
+                },
+                items: sportsCenters.map<DropdownMenuItem<String>>((center) {
+                  return DropdownMenuItem<String>(
+                    value: center['name'],
+                    child: Text(center['name']),
+                  );
+                }).toList(),
+              ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: Text(
                     selectedDate == null
                         ? 'Select Date'
-                        : 'Selected Date: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
-                    style: TextStyle(fontSize: 16),
+                        : 'Selected Date: ${DateFormat('yyyy-MM-dd').format(selectedDate!)}',
                   ),
                 ),
                 ElevatedButton(
-                  style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
-                    )
-                  )
-                ),
-                  onPressed: () => _selectDate(context),
+                  onPressed: () async {
+                    final DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate ?? DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2030),
+                    );
+                    if (pickedDate != null && pickedDate != selectedDate) {
+                      setState(() {
+                        selectedDate = pickedDate;
+                      });
+                    }
+                  },
                   child: Text('Pick a Date'),
-                ), 
-         ],
-        ),
-            SizedBox(height: 16.0),
-        
-        //Start Time
-      Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget> [
-Text("${startTime?.hour ?? '--'}: ${startTime?.minute ?? '--'}"),
-ElevatedButton(
-  style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
-                    )
-                  )
                 ),
-child: const Text("Choose Start Time"),
-onPressed: () async {
-final TimeOfDay? startTimeOfDay = await showTimePicker(
-context: context,
-initialTime: startTime ?? TimeOfDay.now(),
-initialEntryMode: TimePickerEntryMode.dial,
-);
-if (startTimeOfDay != null) {
-setState(() {
-startTime = startTimeOfDay;
-});
-}
-},
-), 
-], 
-        ),
-            SizedBox(height: 16.0),
-    //End Time
-
-Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget> [
-Text("${endTime?.hour ?? '--'}: ${endTime?.minute ?? '--'}"),
-ElevatedButton(
-  style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
-                    )
-                  )
-                ),
-child: const Text("Choose End Time"),
-onPressed: () async {
-final TimeOfDay? endTimeOfDay = await showTimePicker(
-context: context,
-initialTime: endTime ?? TimeOfDay.now(),
-initialEntryMode: TimePickerEntryMode.dial,
-);
-if (endTimeOfDay != null) {
-setState(() {
-endTime = endTimeOfDay;
-});
-}
-},
-
-), 
-], 
-        ),
-      ]),
-    ),
-     bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: () =>Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Dashboard(),
-            )),
-              child: Text('Back'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
+              ],
             ),
+            SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    startTime == null
+                        ? 'Select Start Time'
+                        : 'Start Time: ${startTime!.format(context)}',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: startTime ?? TimeOfDay.now(),
+                    );
+                    if (pickedTime != null && pickedTime != startTime) {
+                      setState(() {
+                        startTime = pickedTime;
+                      });
+                    }
+                  },
+                  child: Text('Pick Start Time'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    endTime == null
+                        ? 'Select End Time'
+                        : 'End Time: ${endTime!.format(context)}',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: endTime ?? TimeOfDay.now(),
+                    );
+                    if (pickedTime != null && pickedTime != endTime) {
+                      setState(() {
+                        endTime = pickedTime;
+                      });
+                    }
+                  },
+                  child: Text('Pick End Time'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () =>Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => EquipmentList(),
-            )),
-              child: Text('Next'),
-              style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              ),
+              onPressed: checkAvailability,
+              child: Text('Check Availability'),
             ),
           ],
         ),
       ),
-    ); 
+    );
   }
-  
 }
-

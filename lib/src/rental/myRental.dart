@@ -12,6 +12,26 @@ import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
 //   }
 // }
 
+
+// class RentalDetails {
+//   final int sportCenterId;
+//   final int equipmentID;
+//   final String date;
+//   final String startTime;
+//   final String endTime;
+//   final int quantityRented;
+
+//   RentalDetails({
+//     required this.sportCenterId,
+//     required this.equipmentID,
+//     required this.date,
+//     required this.startTime,
+//     required this.endTime,
+//     required this.quantityRented,
+//   });
+// }
+
+
 class MyRentalsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
