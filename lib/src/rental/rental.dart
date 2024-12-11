@@ -62,6 +62,7 @@ class _RentalPageState extends State<RentalPage> {
         });
       } else {
         print('Error: ${response.body}');
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to fetch sports centers.')),
         );
@@ -125,7 +126,12 @@ class _RentalPageState extends State<RentalPage> {
           ),
         );
       } else {
-        print('Error: ${response.body}');
+     print('Error: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      print('Request URL: $url');
+      print('Request Headers: ${response.request?.headers}');
+    
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to check availability.')),
         );
@@ -279,5 +285,9 @@ class _RentalPageState extends State<RentalPage> {
         ),
       ),
     );
+  }
+    TimeOfDay _adjustMinutes(TimeOfDay time) {
+    int adjustedMinutes = (time.minute < 15 || time.minute >= 45) ? 0 : 30;
+    return TimeOfDay(hour: time.hour, minute: adjustedMinutes);
   }
 }

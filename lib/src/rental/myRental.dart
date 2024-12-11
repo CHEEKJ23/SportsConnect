@@ -1,163 +1,242 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
+import 'rentalCountdown.dart' ;
+class MyRentalsPage extends StatefulWidget {
+  @override
+  _MyRentalsPageState createState() => _MyRentalsPageState();
+}
 
-// void main() => runApp(MyApp());
+class _MyRentalsPageState extends State<MyRentalsPage> {
+  List<dynamic> rentals = [];
 
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: MyRentalsPage(),
-//     );
-//   }
-// }
+  @override
+  void initState() {
+    super.initState();
+    fetchRentals();
+  }
 
+  Future<void> fetchRentals() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
 
-// class RentalDetails {
-//   final int sportCenterId;
-//   final int equipmentID;
-//   final String date;
-//   final String startTime;
-//   final String endTime;
-//   final int quantityRented;
+    if (token == null) {
+      // Handle missing token, e.g., redirect to login
+      return;
+    }
 
-//   RentalDetails({
-//     required this.sportCenterId,
-//     required this.equipmentID,
-//     required this.date,
-//     required this.startTime,
-//     required this.endTime,
-//     required this.quantityRented,
-//   });
-// }
+    final response = await http.get(
+      Uri.parse('http://10.0.2.2:8000/api/equipment-rental/my-rentals'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
 
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData['status'] == 'success') {
+        setState(() {
+          rentals = responseData['rentals'];
+        });
+      } else {
+        // Handle unexpected response structure
+        print('Unexpected response format');
+      }
+    } else {
+      // Handle error
+      print('Failed to load rentals');
+    }
+  }
 
-class MyRentalsPage extends StatelessWidget {
+  Future<void> sendReturnRequest(String rentalId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Authentication token not found. Please log in again.')),
+      );
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8000/api/rentals/return-request'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'rentalID': rentalId,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Return request sent successfully.')),
+        );
+      } else {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final String errorMessage = responseData['message'] ?? 'Failed to send return request.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+
+    // Separate rentals into ongoing and completed
+    List<dynamic> ongoingRentals = rentals.where((rental) {
+      DateTime rentalEndTime = DateTime.parse("${rental['date']} ${rental['endTime']}");
+      return rentalEndTime.isAfter(now);
+    }).toList();
+
+    List<dynamic> completedRentals = rentals.where((rental) {
+      DateTime rentalEndTime = DateTime.parse("${rental['date']} ${rental['endTime']}");
+      return rentalEndTime.isBefore(now);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-          
-            SizedBox(width: 8),
-            Text("My Rentals"),
-          ],
-        ),
+        title: Text("My Rentals"),
       ),
       drawer: const myBooking.NavigationDrawer(),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Ongoing Section
-              Text(
-                "Ongoing",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: rentals.isEmpty
+          ? Center(
+              child: Text(
+                "No rentals made",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 8),
-              RentalCard(
-                color: Colors.lightBlue[100],
-                title: "Rental 1",
-                centerName: "Sport Center 1",
-                description: "Description Description",
-              ),
-              RentalCard(
-                color: Colors.lightBlue[100],
-                title: "Rental 2",
-                centerName: "Sport Center 2",
-                description: "Description Description",
-              ),
-              SizedBox(height: 16),
-              // Completed Section
-              Text(
-                "Completed",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 8),
-              RentalCard(
-                color: Colors.lightGreen[100],
-                title: "Rental 3",
-                centerName: "Sport Center 3",
-                description: "Description Description",
-              ),
-            ],
-          ),
-        ),
-      ),
+            )
+          : ListView(
+              children: [
+                // Ongoing Rentals
+                if (ongoingRentals.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Ongoing Rentals',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ...ongoingRentals.map((rental) => RentalCard(rental: rental, isOngoing: true,onReturn: sendReturnRequest)).toList(),
+                ],
+
+                // Divider for History
+                if (completedRentals.isNotEmpty) ...[
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Rental History',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ...completedRentals.map((rental) => RentalCard(rental: rental, isOngoing: true, onReturn: sendReturnRequest)).toList(),
+                ],
+              ],
+            ),
     );
   }
 }
 
 class RentalCard extends StatelessWidget {
-  final Color? color;
-  final String title;
-  final String centerName;
-  final String description;
+ final Map<String, dynamic> rental;
+  final bool isOngoing;
+  final Function(String)? onReturn;
 
-  const RentalCard({
-    Key? key,
-    required this.color,
-    required this.title,
-    required this.centerName,
-    required this.description,
-  }) : super(key: key);
+  const RentalCard({Key? key, required this.rental, required this.isOngoing, required this.onReturn}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 8.0),
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8.0),
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Placeholder image
-          Container(
-            height: 60,
-            width: 60,
-            color: Colors.grey[300],
-            child: Icon(Icons.image, size: 40, color: Colors.grey[600]),
-          ),
-          SizedBox(width: 12),
-          // Rental details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Text(
-                  centerName,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                Icon(
+                  rental['rentalStatus'] == 'ongoing'
+                      ? Icons.timelapse
+                      : Icons.check_circle,
+                  color: rental['rentalStatus'] == 'ongoing'
+                      ? Colors.blue
+                      : Colors.green,
                 ),
+                SizedBox(width: 8),
                 Text(
-                  title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  description,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                  rental['equipment_name'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
-          ),
-          // View button
-          ElevatedButton(
-            onPressed: () {
-              // Navigate to rental details or perform an action
-            },
-            child: Text("View"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              textStyle: TextStyle(fontSize: 14),
+            SizedBox(height: 8),
+            Text(
+              'Sport Center: ${rental['sport_center_name']}',
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
-          ),
-        ],
+            Text(
+              'Date: ${rental['date']}',
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
+            Text(
+              'Time: ${rental['startTime']} - ${rental['endTime']}',
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
+            Text(
+              'Quantity: ${rental['quantity_rented']}',
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
+            if (isOngoing) ...[
+              SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                     Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => RentalCountdown(rentalDate: rental['date'], startTime: rental['startTime'], endTime: rental['endTime'])), 
+ );
+                    },
+                    child: Text("View Countdown"),
+                  ),
+                  SizedBox(width: 8),
+                 ElevatedButton(
+                onPressed: () {
+                  if (onReturn != null) {
+                    onReturn!(rental['rentalID'].toString()); 
+                  }
+                },
+
+                child: Text("Return"),
+              ),
+                ],
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

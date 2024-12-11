@@ -352,7 +352,7 @@ Builder(
               }
             ),
             // headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
-            headerCategoryItem('Blogging', Fryo.history, onPressed: () {}),
+            headerCategoryItem('Activity', Fryo.flag, onPressed: () {}),
           ],
         ),
       )

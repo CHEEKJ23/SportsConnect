@@ -288,11 +288,11 @@ initialEntryMode: TimePickerEntryMode.dial,
 if (endTimeOfDay != null) {
 setState(() {
 endTime = endTimeOfDay;
-// int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
-//           ? 00
-//           : 30;
+int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
+          ? 00
+          : 30;
           
-      endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: endTimeOfDay.minute);
+      endTime = TimeOfDay(hour: endTimeOfDay.hour, minute: adjustedEndMinutes);
 });
 }
 },

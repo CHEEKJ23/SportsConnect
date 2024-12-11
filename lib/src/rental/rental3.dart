@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/src/screens/dashboard.dart';
+import 'myRental.dart';
 
 class RentalDetails {
   final int sportCenterId;
@@ -123,26 +125,44 @@ class ItemDetailPage extends StatelessWidget {
               },
               child: Text("Cancel"),
             ),
-            ElevatedButton(
-              onPressed: () {
-                int? inputQuantity = int.tryParse(quantityController.text);
-                if (inputQuantity == null || inputQuantity <= 0) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Please enter a valid quantity.")),
-                  );
-                } else if (inputQuantity > equipmentDetails['quantity_available']) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Quantity exceeds available items.")),
-                  );
-                } else {
-                  Navigator.of(context).pop(); // Close dialog
-                  rentalDetails.setEquipmentID(equipmentDetails['equipmentID']);
-                  rentalDetails.setQuantityRented(inputQuantity);
-                  rentEquipment(context);
-                }
-              },
-              child: Text("Confirm"),
-            ),
+ElevatedButton(
+  onPressed: () async {
+    int? inputQuantity = int.tryParse(quantityController.text);
+    if (inputQuantity == null || inputQuantity <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please enter a valid quantity.")),
+      );
+    } else if (inputQuantity > equipmentDetails['quantity_available']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Quantity exceeds available items.")),
+      );
+    } else {
+      rentalDetails.setEquipmentID(equipmentDetails['equipmentID']);
+      rentalDetails.setQuantityRented(inputQuantity);
+
+      try {
+        await rentEquipment(context);
+        // Show a success message before closing the dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Rental successful!")),
+        );
+        // Close the dialog and navigate to MyRentalsPage
+        Navigator.of(context).pop();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyRentalsPage()),
+        );
+      } catch (error) {
+        // Handle any errors that occur during the rental process
+        print("Error during rental: $error");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to rent equipment. Please try again.")),
+        );
+      }
+    }
+  },
+  child: Text("Confirm"),
+)
           ],
         );
       },
@@ -169,11 +189,12 @@ class ItemDetailPage extends StatelessWidget {
             Stack(
               children: [
                 // Placeholder for image carousel
-                Container(
-                  height: 200,
-                  color: Colors.grey[300],
-                  child: Center(child: Text("Image Carousel")),
-                ),
+                HeaderTopCarouselWidget(),
+                // Container(
+                //   height: 200,
+                //   color: Colors.grey[300],
+                //   child: Center(child: Text("Image Carousel")),
+                // ),
                 Positioned(
                   top: 110,
                   left: 16,
@@ -296,56 +317,6 @@ class ItemDetailPage extends StatelessWidget {
     );
   }
 }
-
-// class HeaderTopCarouselWidget extends StatelessWidget {
-//   final List<dynamic> images;
-
-//   HeaderTopCarouselWidget({required this.images});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Column(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       crossAxisAlignment: CrossAxisAlignment.center,
-//       children: <Widget>[
-//         SizedBox(
-//           height: 240,
-//           child: CarouselView(
-//             itemExtent: MediaQuery.of(context).size.width - 2,
-//             itemSnapping: true,
-//             elevation: 2,
-//             padding: const EdgeInsets.all(8),
-//             children: List.generate(images.length, (int index) {
-//               return Container(
-//                 color: Colors.white,
-//                 child: Image.network(
-//                   images[index], // Load each image from the network
-//                   fit: BoxFit.contain,
-//                 ),
-//               );
-//             }),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
-
-
-
-
-   // Positioned(
-                //   top:110,
-                //   left: 16,
-                //   child: Icon(Icons.arrow_back_ios, color: Colors.black),
-                // ),
-                // Positioned(
-                //   top:110,
-
-                //   right: 16,
-                //   child: Icon(Icons.arrow_forward_ios, color: Colors.black),
-                // ),
-                //  HeaderTopCarouselWidget(images: equipmentDetails['images']),
 
 
 
