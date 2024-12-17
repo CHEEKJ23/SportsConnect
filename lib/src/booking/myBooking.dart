@@ -14,7 +14,7 @@ import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
 import '../booking/testNotification.dart';
 import '../booking/testNotifyButton.dart';
 import '../rental/myRental.dart';
-
+import '../deals/myDeal.dart';
 import '../booking/updateBooking.dart';//side bar drawer is here
 
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -120,8 +120,13 @@ class NavigationDrawer extends StatelessWidget {
             onTap: (){},
           ),ListTile(
             leading: Icon(Icons.update),
-            title: const Text('Update'),
-            onTap: (){},
+            title: const Text('My Deals'),
+            onTap: (){
+              Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => MyDealsPage()), 
+ );
+            },
           ),ListTile(
             leading: Icon(Icons.book_online),
             title: const Text('Booking'),

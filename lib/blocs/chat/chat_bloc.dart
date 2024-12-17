@@ -179,5 +179,41 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatNotificationOpened>((event, emit) {
       emit(state.copyWith(notificationChatId: event.chatId));
     });
+       // New event for sending item details
+       // New event for sending item details
+       // New event for sending item details
+       // New event for sending item details
+       // New event for sending item details
+       // New event for sending item details
+
+//     on<SendMessageWithItemDetails>((event, emit) async {
+//   if (state.status.isSubmitting) return;
+//   emit(state.copyWith(status: DataStatus.submitting));
+
+//   final result = await _chatMessageRepository.createChatMessage(
+//     CreateChatMessageRequest(
+//       chatId: event.chatId,
+//       message: event.message,
+//     ),
+//     '',
+//   );
+
+//   if (result.success) {
+//     final messages = [result.data!, ...state.chatMessages];
+
+//     emit(
+//       state.copyWith(
+//         chatMessages: messages,
+//         status: DataStatus.loaded,
+//       ),
+//     );
+//   } else {
+//     emit(state.copyWith(
+//       status: DataStatus.error,
+//       message: result.message,
+//     ));
+//   }
+// });
+
   }
 }

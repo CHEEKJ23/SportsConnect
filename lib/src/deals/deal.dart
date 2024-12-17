@@ -1,149 +1,218 @@
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(MyApp());
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/models/models.dart';
+import 'package:shop/utils/chat.dart';
+import 'package:shop/utils/utils.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shop/blocs/blocs.dart';
+import 'package:shop/blocs/chat/chat_bloc.dart';
+import 'package:shop/blocs/user/user_bloc.dart';
+import 'package:shop/cubits/cubits.dart';
+import 'package:shop/models/models.dart';
+import 'package:shop/screens/chat/chat_screen.dart';
+import 'package:shop/screens/chat_list/chat_list_item.dart';
+import 'package:shop/screens/guest/guest_screen.dart';
+import 'package:shop/utils/utils.dart';
+import 'package:shop/widgets/widgets.dart';
+// import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:search_page/search_page.dart';
+class AllDealsPage extends StatefulWidget {
+  @override
+  _AllDealsPageState createState() => _AllDealsPageState();
 }
 
-class MyApp extends StatelessWidget {
+class _AllDealsPageState extends State<AllDealsPage> {
+  List<dynamic> deals = [];
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: ItemListPage(),
-    );
+  void initState() {
+    super.initState();
+    fetchAllDeals();
   }
-}
 
-class Item {
-  final String name;
-  final String price;
-  final String imagePath;
+  Future<void> fetchAllDeals() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
 
-  Item({required this.name, required this.price, required this.imagePath});
-}
+    if (token == null) {
+      print('Token is null. Redirecting to login.');
+      return;
+    }
 
-class ItemListPage extends StatelessWidget {
-  final List<Item> items = [
-    Item(name: 'Persona elegance', price: 'MYR9,000', imagePath: 'assets/images/hamburger.png'),
-    Item(name: 'Apple iPhone 13 256GB', price: 'MYR1,999', imagePath: 'assets/images/hamburger.png'),
-    Item(name: '2022 PERODUA MYVI M...', price: 'MYR459', imagePath: 'assets/images/hamburger.png'),
-    Item(name: 'Excavator 1.2 Ton', price: 'MYR1,999', imagePath: 'assets/images/hamburger.png'),
-  ];
+    try {
+      final response = await http.get(
+        Uri.parse('http://10.0.2.2:8000/api/view/deals'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Items'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8.0,
-            mainAxisSpacing: 8.0,
-            childAspectRatio: 0.75,
-          ),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return ItemCard(
-              item: items[index],
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ItemDetailPage(item: items[index]),
-                  ),
-                );
-              },
-            );
-          },
-        ),
-      ),
-    );
+      if (response.statusCode == 200) {
+        setState(() {
+          deals = jsonDecode(response.body);
+        });
+        print('Fetched deals: ${response.body}');
+      } else {
+        print('Failed to fetch deals. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('An error occurred: $e');
+    }
   }
-}
 
-class ItemCard extends StatelessWidget {
-  final Item item;
-  final VoidCallback onTap;
-
-  ItemCard({required this.item, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 4,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildDealCard(Map<String, dynamic> deal) {
+    return Card(
+      
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(16.0),
+        leading: deal['image_path'] != null
+            ? Image.network(
+                deal['image_path'],
+                width: 50.0,
+                height: 50.0,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.image, size: 50.0);
+                },
+              )
+            : Icon(Icons.image, size: 50.0),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
-              child: Image.asset(
-                item.imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
               child: Text(
-                item.price,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
-              child: Text(
-                item.name,
-                style: TextStyle(fontSize: 14),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                deal['title'] ?? 'No Title',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
               ),
             ),
           ],
         ),
+        
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 8.0),
+            Text(
+              'Price: \$${deal['price'] ?? 'N/A'}',
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              'Location: ${deal['location'] ?? 'Unknown'}',
+              style: TextStyle(
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              
+              // 'Posted by: ${deal['userName'] ?? 'Unknown User'}',
+              'Posted by: ${deal['user']?['name'] ?? 'Unknown User'}',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        // trailing: IconButton(
+        //   icon: Icon(Icons.message, color: Colors.blue),
+        //   onPressed: () {
+        //     // Implement chat or contact functionality
+        //     print('Contact seller for deal: ${deal['id']}');
+        //   },
+        // ),
+trailing: IconButton(
+  icon: Icon(Icons.message, color: Colors.blue),
+  onPressed: () {
+    final userId = deal['userID']; 
+
+    if (userId == null) {
+      // Handle case where user_id is null
+      print('User ID is null for this deal');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('This deal does not have a valid user')),
+      );
+      return; // Exit the function
+    }
+
+    final user = getUserById(userId);
+
+    if (user != null) {
+      // Proceed if the user is found
+      // context.read<ChatBloc>().add(UserSelected(user));
+      // Navigator.of(context).pushNamed(ChatScreen.routeName);
+context.read<ChatBloc>().add(UserSelected(user));
+Navigator.of(context).pushNamed(
+  ChatScreen.routeName,
+  arguments: {
+    'defaultMessage': "Hello, I'm interested in this item. Could you provide more details?"
+  },
+);
+    } else {
+      // Handle missing user
+      print('User not found for ID: $userId');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User not found for this deal')),
+      );
+    }
+  },
+),
       ),
     );
   }
+UserEntity? getUserById(int? userId) {
+  if (userId == null) return null; // Early return for null userId
+  final users = context.read<UserBloc>().state.mapOrNull(loaded: (state) => state.users) ?? [];
+  return users.firstWhere((user) => user.id == userId);
 }
-
-class ItemDetailPage extends StatelessWidget {
-  final Item item;
-
-  ItemDetailPage({required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(item.name),
+        title: Text('Available Deals'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(item.imagePath),
-            SizedBox(height: 20),
-            Text(
-              item.name,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: deals.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16.0),
+                  Text(
+                    'Loading deals...',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: fetchAllDeals,
+              child: ListView.builder(
+                padding: EdgeInsets.all(8.0),
+                itemCount: deals.length,
+                itemBuilder: (context, index) => _buildDealCard(deals[index]),
+              ),
             ),
-            Text(
-              item.price,
-              style: TextStyle(fontSize: 20, color: Colors.green),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Implement buy action here
-              },
-              child: Text('Text Now'),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

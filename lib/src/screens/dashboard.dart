@@ -372,7 +372,7 @@ Builder(
               onPressed: () {
                 Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => ItemListPage()),
+          MaterialPageRoute(builder: (context) => AllDealsPage()),
         );
               },
               child: Text("Buy"),
@@ -381,7 +381,7 @@ Builder(
               onPressed: () {
                  Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CreateItemPage()),
+          MaterialPageRoute(builder: (context) => CreateDealPage()),
         );
               },
               child: Text("Sell"),

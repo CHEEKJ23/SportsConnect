@@ -21,6 +21,9 @@ class DioClient {
     final dio = Dio(
       BaseOptions(
         baseUrl: "http://10.0.2.2:8000",
+        // baseUrl: "http://192.168.50.150:8000",
+        //  baseUrl: "http://192.168.0.106:8000",
+
         receiveTimeout: 30000, // 30 seconds
         connectTimeout: 30000,
         sendTimeout: 30000,
