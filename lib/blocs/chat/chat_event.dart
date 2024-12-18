@@ -29,4 +29,3 @@ class ChatEvent with _$ChatEvent {
   //   required String message,
   // }) = SendMessageWithItemDetails;
 }
-

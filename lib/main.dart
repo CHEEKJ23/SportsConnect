@@ -143,7 +143,7 @@ class MyApp extends StatelessWidget {
             SplashScreen.routeName: (_) => const SplashScreen(),
             GuestScreen.routeName: (_) => const GuestScreen(),
             ChatListScreen.routeName: (_) => const ChatListScreen(),
-            ChatScreen.routeName: (_) => const ChatScreen(),
+            ChatScreen.routeName: (_) =>  ChatScreen(),
             // BookingPage.routeName: (_) => BookingPage(),
             // SportCenterList.routeName: (_) =>  SportCenterList([]),
           },

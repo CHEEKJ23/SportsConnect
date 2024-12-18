@@ -11,6 +11,9 @@ import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
 import '../rental/rental.dart';
 import '../deals/deal.dart';
 import '../deals/deal2.dart';
+import '../activity/activity.dart';
+import '../activity/joinActivity.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -336,7 +339,8 @@ Builder(
             Builder(
               builder: (context) {
                 return headerCategoryItem('Deals', Fryo.money, onPressed: () {
-                   _showDealsDialog(context);
+                    _showDealsDialog(context);
+
                 });
               }
             ),
@@ -351,8 +355,16 @@ Builder(
                 });
               }
             ),
-            // headerCategoryItem('Activity', Fryo.calendar, onPressed: () {}),
-            headerCategoryItem('Activity', Fryo.flag, onPressed: () {}),
+
+
+              Builder(
+              builder: (context) {
+                return headerCategoryItem('Activity', Fryo.flag, onPressed: () {
+                    _showAvtivitiesDialog(context);
+
+                });
+              }
+            ),
           ],
         ),
       )
@@ -385,6 +397,39 @@ Builder(
         );
               },
               child: Text("Sell"),
+            ),
+          ],
+        );
+      },
+    );
+ }
+
+
+ void _showAvtivitiesDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Choose an Option"),
+          content: Text("Would you like to Create or Join?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => CreateActivityPage()),
+        );
+              },
+              child: Text("Create"),
+            ),
+            TextButton(
+              onPressed: () {
+                 Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => JoinActivityPage()),
+        );
+              },
+              child: Text("Join"),
             ),
           ],
         );
