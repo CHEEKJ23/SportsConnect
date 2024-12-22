@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/blocs/blocs.dart';
+import 'package:shop/blocs/chat/chat_bloc.dart';
+import 'package:shop/blocs/user/user_bloc.dart';
+import 'package:shop/cubits/cubits.dart';
+import 'package:shop/models/models.dart';
+import 'package:shop/screens/chat/chat_screen.dart';
+import 'package:shop/screens/chat_list/chat_list_item.dart';
+import 'package:shop/screens/guest/guest_screen.dart';
+import 'package:shop/utils/utils.dart';
+import 'package:shop/widgets/widgets.dart';
+// import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:search_page/search_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // Import flutter_bloc
 
 class JoinActivityPage extends StatefulWidget {
   @override
@@ -210,6 +223,19 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
     super.initState();
     fetchActivities(); 
   }
+
+  UserEntity? getUserById(int? userId) {
+  if (userId == null) return null; // Early return for null userId
+
+  // Ensure that the users list contains UserEntity objects
+  final users = context.read<UserBloc>().state.mapOrNull(loaded: (state) => state.users) ?? [];
+
+  // Find the user with the matching ID
+  return users.firstWhere(
+    (user) => user.id == userId,
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -293,11 +319,23 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(Icons.message),
-              onPressed: () {
-                // Handle message icon press
-                print('Message icon pressed for activity ID: ${activity['id']}');
-              },
+                icon: Icon(Icons.message),
+           onPressed: () {
+            final userId = activity['user_id']; // Extract userId from activity data
+            UserEntity? user = getUserById(userId);
+            if (user != null) {
+              // Dispatch an event to the ChatBloc to start a chat with the user
+              BlocProvider.of<ChatBloc>(context).add(UserSelected(user));
+
+              // Navigate to the ChatScreen
+              Navigator.of(context).pushNamed(ChatScreen.routeName);
+            } else {
+              // Handle the case where the user is not found
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('User not found.')),
+              );
+            }
+          },
             ),
             ElevatedButton(
               onPressed: () {

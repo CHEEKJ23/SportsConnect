@@ -16,7 +16,10 @@ import '../booking/testNotifyButton.dart';
 import '../rental/myRental.dart';
 import '../deals/myDeal.dart';
 import '../booking/updateBooking.dart';//side bar drawer is here
-
+import '../activity/myActivity.dart';
+import '../Feedback/feedback.dart';
+import '../Feedback/viewFeedback.dart';
+import '../reward/reward.dart';
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
@@ -95,66 +98,123 @@ class NavigationDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.home_outlined),
             title: const Text('Home'),
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
               Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => Dashboard(),
-            ));
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => Dashboard(),
+                ),
+              );
             },
           ),
-          const Divider(color:Colors.black26),
+          const Divider(color: Colors.black26),
           ListTile(
             leading: Icon(Icons.notification_important),
             title: const Text('Test Notification'),
-            onTap: (){
+            onTap: () {
               Navigator.push(
-   context,
-   MaterialPageRoute(builder: (context) => testNotifyButton()), 
- );
+                context,
+                MaterialPageRoute(builder: (context) => testNotifyButton()),
+              );
             },
-          ),ListTile(
+          ),
+          ListTile(
             leading: Icon(Icons.workspace_premium_outlined),
-            title: const Text('Workflow'),
-            onTap: (){},
-          ),ListTile(
+            title: const Text('My Activity'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => UserActivitiesScreen()),
+              );
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.update),
             title: const Text('My Deals'),
-            onTap: (){
+            onTap: () {
               Navigator.push(
-   context,
-   MaterialPageRoute(builder: (context) => MyDealsPage()), 
- );
+                context,
+                MaterialPageRoute(builder: (context) => MyDealsPage()),
+              );
             },
-          ),ListTile(
+          ),
+          ListTile(
             leading: Icon(Icons.book_online),
             title: const Text('Booking'),
-            onTap: (){
-Navigator.push(
-   context,
-   MaterialPageRoute(builder: (context) => MyBookingsPage()), 
- );
-
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyBookingsPage()),
+              );
             },
-          ),ListTile(
+          ),
+          ListTile(
             leading: Icon(Icons.car_rental),
             title: const Text('Rental'),
-            onTap: (){
+            onTap: () {
               Navigator.pushReplacement(
-   context,
-   MaterialPageRoute(builder: (context) => MyRentalsPage()), 
- );
+                context,
+                MaterialPageRoute(builder: (context) => MyRentalsPage()),
+              );
             },
-          ),ListTile(
+          ),
+          ListTile(
+            leading: Icon(Icons.supervised_user_circle),
+            title: const Text('Feedback'),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Choose an option'),
+                    content: Text('Would you like to send feedback or view feedbacks?'),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Send Feedback'),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FeedbackPage()),
+                          );
+                        },
+                      ),
+                      TextButton(
+                        child: Text('View Feedbacks'),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FeedbackListPage()),
+                          );
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.card_giftcard),
+            title: const Text('Rewards'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => RewardScreen()),
+              );
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.logout),
             title: const Text('Log Out'),
-            onTap: (){
-            context.read<GuestCubit>().signOut();
-             Navigator.pushReplacement(
-   context,
-   MaterialPageRoute(builder: (context) => GuestScreen()), 
- );
+            onTap: () {
+              context.read<GuestCubit>().signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => GuestScreen()),
+              );
             },
           ),
         ],
@@ -162,6 +222,7 @@ Navigator.push(
     );
   }
 }
+
 class MyBookingsPage extends StatefulWidget {
   @override
   _MyBookingsPageState createState() => _MyBookingsPageState();

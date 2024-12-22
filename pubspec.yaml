@@ -103,6 +103,13 @@ flutter:
     - assets/images/vodka.png
     - assets/images/welcome.png
     - assets/images/stripe.png
+    - assets/images/badminton.jpg
+    - assets/images/basketball.jpg
+    - assets/images/futsal.jpg
+    - assets/images/tennis.jpeg
+    - assets/images/volleyball.jpg
+    - assets/images/pingpong.jpg
+    - assets/images/pickleball.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

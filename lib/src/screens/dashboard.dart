@@ -13,7 +13,7 @@ import '../deals/deal.dart';
 import '../deals/deal2.dart';
 import '../activity/activity.dart';
 import '../activity/joinActivity.dart';
-
+import '../booking/myBooking.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,16 +23,13 @@ import 'package:flutter_login/flutter_login.dart';
 import 'package:shop/src/screens/dashboard.dart';
 
 List<String> imageFiles = [
-  'akara.png',
-  'coca-cola.png',
-  'hamburger.png',
-  'lemonade.png',
-  'pancake.png',
-  'pasta.png',
-  'strawberry.png', 
-  'tequila.png',
-  'vodka.png',
-  'welcome.png',
+'badminton.jpg',
+'basketball.jpg',
+'futsal.jpg',
+'tennis.jpeg',
+'volleyball.jpg',
+'pingpong.jpg',
+'pickleball.jpg',
 ];
 
 class Dashboard extends StatefulWidget {
@@ -89,11 +86,10 @@ class DashboardState extends State<Dashboard> {
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(icon: Icon(Fryo.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Fryo.hand), label: 'Chat'),
+            BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Chat'),
             BottomNavigationBarItem(
-                icon: Icon(Fryo.heart_1), label: 'Favourites'),
-            BottomNavigationBarItem(icon: Icon(Fryo.user_1), label: 'Profile'),
-            BottomNavigationBarItem(icon: Icon(Fryo.cog_1), label: 'Settings')
+                icon: Icon(Fryo.book), label: 'Booking'),
+            BottomNavigationBarItem(icon: Icon(Fryo.gift), label: 'Rewards'),
           ],
           currentIndex: _selectedIndex,
           type: BottomNavigationBarType.fixed,
@@ -103,9 +99,22 @@ class DashboardState extends State<Dashboard> {
   }
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 1) {
+      // Navigate to ChatListScreen when Chat tab is tapped
+      Navigator.of(context).pushNamed(ChatListScreen.routeName);
+    } 
+     else if (index == 2) {
+      
+    Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => MyBookingsPage()), 
+ );
+    }
+    else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 }
 
@@ -268,14 +277,7 @@ Widget storeTab(BuildContext context) {
       }, onLike: () {}),
     ]),
     divider(),
-    sectionHeader('Featured', onViewMore: () {}),
-
-    ItemCard(),
-    ItemCard(),
-    ItemCard(),
-    ItemCard(),
-
-
+  
   ]);
 }
 
@@ -288,13 +290,7 @@ Widget sectionHeader(String headerTitle, {onViewMore}) {
         margin: const EdgeInsets.only(left: 15, top: 10,bottom:0),
         child: Text(headerTitle, style: h4),
       ),
-      Container(
-        margin: const EdgeInsets.only(left: 15, top: 2,bottom:0),
-        child: TextButton(
-          onPressed: onViewMore,
-          child: const Text('View all >', style: contrastText),
-        ),
-      )
+
     ],
   );
 }
@@ -491,7 +487,7 @@ class HeaderTopCarouselWidget extends StatelessWidget {
           child: CarouselView(
             itemExtent: MediaQuery.of(context).size.width - 32,
             itemSnapping: true,
-            elevation: 4,
+            elevation: 5,
             padding: const EdgeInsets.all(8),
             children: List.generate(imageFiles.length, (int index) {
   return Container(
@@ -539,72 +535,6 @@ Widget deals(String dealTitle, {onViewMore, List<Widget>? items}) {
   );
 }
 
-// ItemCard
-class ItemCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-
-    return 
-    Container(
-      
-      margin: const EdgeInsets.only(top: 5, right: 15, left: 15.0,bottom: 5),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey), // Border around the card
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-      ),
-      padding: EdgeInsets.all(10), // Padding inside the card
-      width: 300, // Adjust the width as needed
-
-      child: Row(
-        children: [
-
-          // Image Placeholder
-          Container(
-            width: 80, // Image size
-            height: 80,
-            color: Colors.grey[300], // Background color of image placeholder
-            child: Icon(Icons.image, size: 40, color: Colors.black54), // Placeholder icon
-          ),
-          SizedBox(width: 10), // Space between image and text content
-
-          // Product Details
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            
-            children:[
-
-              Text(
-                'Yonex 100zz',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'RM 799',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 4),
-              Text(
-                'Second hand',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-              Text(
-                'used for 1/2 year',
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-            ],
-            
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 
 

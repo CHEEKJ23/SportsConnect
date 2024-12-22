@@ -300,7 +300,9 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
 
   Widget _buildDealCard(Map<String, dynamic> deal) {
     final status = deal['status']?.toString().toLowerCase() ?? 'pending';
-    
+    final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+
+
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0),
       elevation: 4.0,
@@ -311,7 +313,7 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
         contentPadding: EdgeInsets.all(16.0),
         leading: deal['image_path'] != null
             ? Image.network(
-                deal['image_path'],
+                imageUrl,
                 width: 50.0,
                 height: 50.0,
                 fit: BoxFit.cover,
@@ -371,11 +373,11 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
           children: [
             IconButton(
               icon: Icon(Icons.edit, color: Colors.blue),
-              onPressed: () => editDeal(deal['id'], deal),
+              onPressed: () => editDeal(deal['dealID'], deal),
             ),
             IconButton(
               icon: Icon(Icons.delete, color: Colors.red),
-              onPressed: () => deleteDeal(deal['id']),
+              onPressed: () => deleteDeal(deal['dealID']),
             ),
           ],
         ),

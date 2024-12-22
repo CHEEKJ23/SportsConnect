@@ -160,9 +160,9 @@ trailing: IconButton(
 context.read<ChatBloc>().add(UserSelected(user));
 Navigator.of(context).pushNamed(
   ChatScreen.routeName,
-  arguments: {
-    'defaultMessage': "Hello, I'm interested in this item. Could you provide more details?"
-  },
+  // arguments: {
+  //   'defaultMessage': "Hello, I'm interested in this item. Could you provide more details?"
+  // },
 );
     } else {
       // Handle missing user
