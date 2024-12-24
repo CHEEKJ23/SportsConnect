@@ -14,6 +14,12 @@ import '../deals/deal2.dart';
 import '../activity/activity.dart';
 import '../activity/joinActivity.dart';
 import '../booking/myBooking.dart';
+import '../reward/reward.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/models/models.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,20 +27,22 @@ import 'package:shop/cubits/cubits.dart';
 import 'package:shop/screens/screens.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:shop/src/screens/dashboard.dart';
+import 'package:shop/src/screens/dashboardDealList.dart';
+import 'package:shop/src/screens/dashboardActivityList.dart';
 
 List<String> imageFiles = [
+'pickleball.jpg',
 'badminton.jpg',
 'basketball.jpg',
 'futsal.jpg',
 'tennis.jpeg',
 'volleyball.jpg',
 'pingpong.jpg',
-'pickleball.jpg',
 ];
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
-
+  
 
   @override
   DashboardState createState() => DashboardState();
@@ -42,6 +50,13 @@ class Dashboard extends StatefulWidget {
 
 class DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
+  List<dynamic> deals = [];
+  
+  @override
+  void initState() {
+    super.initState();
+    // fetchAllDeals();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,20 +80,7 @@ class DashboardState extends State<Dashboard> {
           backgroundColor: primaryColor,
           title:
               const Text('SportsConnect', style: logoWhiteStyle, textAlign: TextAlign.center),
-          actions: <Widget>[
-            IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {},
-              iconSize: 21,
-              icon: const Icon(Fryo.magnifier),
-            ),
-            IconButton(
-              padding: const EdgeInsets.all(0),
-              onPressed: () {},
-              iconSize: 21,
-              icon: const Icon(Fryo.alarm),
-            )
-          ],
+       
         ),
       drawer: myBooking.NavigationDrawer(),
 
@@ -110,6 +112,13 @@ class DashboardState extends State<Dashboard> {
    MaterialPageRoute(builder: (context) => MyBookingsPage()), 
  );
     }
+    else if (index == 3) {
+      
+    Navigator.push(
+   context,
+   MaterialPageRoute(builder: (context) => RewardScreen()), 
+ );
+    }
     else {
       setState(() {
         _selectedIndex = index;
@@ -118,167 +127,54 @@ class DashboardState extends State<Dashboard> {
   }
 }
 
-Widget storeTab(BuildContext context) {
-  // TODO: will pick it up from here, am to start another template
-  List<Product> foods = [
-    Product(
-        name: 'Hamburger',
-        image: 'assets/images/hamburger.png',
-        price: '\$25.00',
-        userLiked: true,
-        discount: 10),
-    Product(
-        name: 'Pasta',
-        image: 'assets/images/pasta.png',
-        price: '\$150.00',
-        userLiked: false,
-        discount: 7.8),
-    Product(
-      name: 'Akara',
-      image: 'assets/images/akara.png',
-      price: '\$10.99',
-      userLiked: false,
-    ),
-    Product(
-        name: 'Strawberry',
-        image: 'assets/images/strawberry.png',
-        price: '\$50.00',
-        userLiked: true,
-        discount: 14)
-  ];
+//  Future<void> fetchAllDeals() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final token = prefs.getString('authToken');
 
-  List<Product> drinks = [
-    Product(
-        name: 'Coca-Cola',
-        image: 'assets/images/coca-cola.png',
-        price: '\$45.12',
-        userLiked: true,
-        discount: 2),
-    Product(
-        name: 'Lemonade',
-        image: 'assets/images/lemonade.png',
-        price: '\$28.00',
-        userLiked: false,
-        discount: 5.2),
-    Product(
-        name: 'Vodka',
-        image: 'assets/images/vodka.png',
-        price: '\$78.99',
-        userLiked: false),
-    Product(
-        name: 'Tequila',
-        image: 'assets/images/tequila.png',
-        price: '\$168.99',
-        userLiked: true,
-        discount: 3.4)
-  ];
+//     if (token == null) {
+//       print('Token is null. Redirecting to login.');
+//       return;
+//     }
+
+//     try {
+//       final response = await http.get(
+//         Uri.parse('http://10.0.2.2:8000/api/view/deals'),
+//         headers: {
+//           'Authorization': 'Bearer $token',
+//           'Content-Type': 'application/json',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         setState(() {
+//           deals = jsonDecode(response.body);
+//         });
+//         print('Fetched deals: ${response.body}');
+//       } else {
+//         print('Failed to fetch deals. Status code: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       print('An error occurred: $e');
+//     }
+//   }
+
+
+Widget storeTab(BuildContext context) {
 
   return ListView(children: <Widget>[
     HeaderTopCarouselWidget(),
     headerTopCategories(),
     deals('Hot Deals', onViewMore: () {}, items: <Widget>[
-      foodItem(foods[0], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: foods[0],
-              );
-            },
-          ),
-        );
-      }, onLike: () {}),
-      foodItem(foods[1], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: foods[1],
-              );
-            },
-          ),
-        );
-      }, imgWidth: 250, onLike: () {}),
-      foodItem(foods[2], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: foods[2],
-              );
-            },
-          ),
-        );
-      }, imgWidth: 200, onLike: () {}),
-      foodItem(foods[3], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: foods[3],
-              );
-            },
-          ),
-        );
-      }, onLike: () {}),
-    ]),
-    deals('Drinks Parol', onViewMore: () {}, items: <Widget>[
-      foodItem(drinks[0], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: drinks[0],
-              );
-            },
-          ),
-        );
-      }, onLike: () {}, imgWidth: 60),
-      foodItem(drinks[1], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: drinks[1],
-              );
-            },
-          ),
-        );
-      }, onLike: () {}, imgWidth: 75),
-      foodItem(drinks[2], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: drinks[2],
-              );
-            },
-          ),
-        );
-      }, imgWidth: 110, onLike: () {}),
-      foodItem(drinks[3], onTapped: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductPage(
-                productData: drinks[3],
-              );
-            },
-          ),
-        );
-      }, onLike: () {}),
-    ]),
+    ]), 
+    SizedBox(height: 10),
+    HorizontalDealsWidget(), 
     divider(),
-  
-  ]);
+    deals('Activities', onViewMore: () {}, items: <Widget>[
+    ]), 
+    SizedBox(height: 10),
+    HorizontalActivitiesWidget(), 
+    divider(),
+  ]); 
 }
 
 Widget sectionHeader(String headerTitle, {onViewMore}) {
@@ -514,28 +410,23 @@ Widget deals(String dealTitle, {onViewMore, List<Widget>? items}) {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         sectionHeader(dealTitle, onViewMore: onViewMore),
-        SizedBox(
-          height: 250,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: items ??
-                [
-                  Container(
-                    margin: const EdgeInsets.only(left: 15),
-                    child: const Text(
-                      'No items available at this moment.',
-                      style: taglineText,
-                    ),
-                  ),
-                ],
-          ),
-        ),
+        // SizedBox(
+        //   height: 250,
+        //   child: ListView(
+        //     scrollDirection: Axis.horizontal,
+        //     children: items ??
+        //         [
+        //           Container(
+        //             margin: const EdgeInsets.only(left: 15),
+        //             child: const Text(
+        //               'No items available at this moment.',
+        //               style: taglineText,
+        //             ),
+        //           ),
+        //         ],
+        //   ),
+        // ),
       ],
     ),
   );
 }
-
-
-
-
-// mhesham1@gmail.com

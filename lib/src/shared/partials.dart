@@ -70,7 +70,7 @@ Widget foodItem(Product food,
                     padding:
                         const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 5),
                     decoration: BoxDecoration(
-                        color: Colors.grey[600],
+                        color: Colors.red,
                         borderRadius: BorderRadius.circular(50)),
                     child: Text('-${food.discount.toString()}%',
                         style: const TextStyle(

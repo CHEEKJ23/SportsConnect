@@ -37,7 +37,7 @@ Future<void> searchSportCenters() async {
     //     headers: {
     //       'Content-Type': 'application/json',
     //       'Authorization': 'Bearer $token',
-    //     },
+    //     },jgf
     try {
    
     final prefs = await SharedPreferences.getInstance();
@@ -211,7 +211,7 @@ final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(sel
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
+                      side: BorderSide(color: Colors.red)
                     )
                   )
                 ),
@@ -235,7 +235,7 @@ ElevatedButton(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
+                      side: BorderSide(color: Colors.red)
                     )
                   )
                 ),
@@ -274,7 +274,7 @@ ElevatedButton(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Color.fromARGB(255, 101, 109, 102))
+                      side: BorderSide(color: Colors.red)
                     )
                   )
                 ),

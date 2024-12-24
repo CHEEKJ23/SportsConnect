@@ -110,6 +110,8 @@ flutter:
     - assets/images/volleyball.jpg
     - assets/images/pingpong.jpg
     - assets/images/pickleball.jpg
+    - assets/images/sportsLogo-Photoroom.png
+    - assets/images/activityDefaultImage.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

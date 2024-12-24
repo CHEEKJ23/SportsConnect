@@ -20,6 +20,8 @@ import '../activity/myActivity.dart';
 import '../Feedback/feedback.dart';
 import '../Feedback/viewFeedback.dart';
 import '../reward/reward.dart';
+import '../screens/dashboardDealList.dart';
+
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 
@@ -217,6 +219,7 @@ class NavigationDrawer extends StatelessWidget {
               );
             },
           ),
+   
         ],
       ),
     );

@@ -4,7 +4,7 @@ import 'package:shop/cubits/cubits.dart';
 import 'package:shop/screens/screens.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:shop/src/screens/dashboard.dart';
-
+import 'package:shop/src/shared/styles.dart';
 class GuestScreen extends StatelessWidget {
   const GuestScreen({super.key});
 
@@ -26,7 +26,7 @@ class GuestScreen extends StatelessWidget {
         pageColorDark: Colors.blue,
         pageColorLight: Colors.blue.shade300,
       ),
-      logo: const AssetImage('assets/images/hamburger.png'),
+      logo: const AssetImage('assets/images/sportsLogo-Photoroom.png'),
       onLogin: cubit.signIn,
       onSignup: cubit.signUp,
       userValidator: (value) {
