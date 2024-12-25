@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/dashboard.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class CreateActivityPage extends StatefulWidget {
   @override
@@ -24,9 +25,12 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   String? selectedSportCenter;
   int? selectedSportCenterId;
   String? selectedSportType;
+  
 
   Future<void> fetchSportsCenters(String location) async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/get-sports-centers?location=$location');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final url = Uri.parse('$baseUrl/api/equipment-rental/get-sports-centers?location=$location');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -63,7 +67,9 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   }
 
   Future<void> fetchSportTypes(int sportCenterId) async {
-  final url = Uri.parse('http://10.0.2.2:8000/api/available-sport-types/$sportCenterId');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+  final url = Uri.parse('$baseUrl/api/available-sport-types/$sportCenterId');
   try {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
@@ -142,10 +148,11 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
     print('End Time: ${activityData['endTime']}');
     print('Player Quantity: $playerQuantity');
     print('Price Per Pax: $pricePerPax');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/create/activities'),
+        Uri.parse('$baseUrl/api/create/activities'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

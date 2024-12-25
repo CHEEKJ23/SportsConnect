@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../booking/booking.dart';
 import '../booking/booking3.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 
 
@@ -41,7 +42,9 @@ SportCenterList(this.sportsCenters);
                              height: 200,
                              decoration: BoxDecoration(
                                image: DecorationImage(
-                                 image: NetworkImage(item['image'] ?? ''),
+                                 image: NetworkImage(
+        'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${item['image'] ?? 'default.jpg'}',
+      ),
                                  fit: BoxFit.cover,
                                ),
                              ),
@@ -84,6 +87,7 @@ SportCenterList(this.sportsCenters);
     final selectedDate = item['date'] ?? 'Unknown Date';
     final startTime = item['startTime'] ?? '00:00';
     final endTime = item['endTime'] ?? '00:00';
+    final image = item['image'] ?? 'default.jpg';
 
     // Debugging: Print the values being passed
     print('Navigating to SportsCenterLayout with:');
@@ -102,6 +106,7 @@ SportCenterList(this.sportsCenters);
           selectedDate: selectedDate,
           startTime: startTime,
           endTime: endTime,
+          image: item['image'],
         ),
       ),
     );

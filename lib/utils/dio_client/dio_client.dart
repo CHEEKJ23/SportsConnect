@@ -16,6 +16,7 @@ class DioClient {
   }
 
   Dio get instance => _dio;
+  String get baseUrl => _dio.options.baseUrl; // Expose the base URL
 
   Dio createDioClient() {
     final dio = Dio(

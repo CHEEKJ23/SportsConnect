@@ -20,6 +20,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'rental2.dart'; // Ensure this import points to the file where EquipmentList is defined
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class RentalPage extends StatefulWidget {
   @override
@@ -38,7 +39,9 @@ class _RentalPageState extends State<RentalPage> {
   int? selectedSportCenterId;
 
   Future<void> fetchSportsCenters(String location) async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/get-sports-centers?location=$location');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final url = Uri.parse('$baseUrl/api/equipment-rental/get-sports-centers?location=$location');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -76,7 +79,9 @@ class _RentalPageState extends State<RentalPage> {
   }
 
   Future<void> checkAvailability() async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/check-availability');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final url = Uri.parse('$baseUrl/api/equipment-rental/check-availability');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -242,7 +247,9 @@ class _RentalPageState extends State<RentalPage> {
                     );
                     if (pickedTime != null && pickedTime != startTime) {
                       setState(() {
-                        startTime = pickedTime;
+
+                        int adjustedMinutes = (pickedTime.minute < 15 || pickedTime.minute >= 45) ? 0 : 30;
+                        startTime = TimeOfDay(hour: pickedTime.hour, minute: adjustedMinutes);
                       });
                     }
                   },
@@ -268,7 +275,9 @@ class _RentalPageState extends State<RentalPage> {
                     );
                     if (pickedTime != null && pickedTime != endTime) {
                       setState(() {
-                        endTime = pickedTime;
+                        // Adjust the minutes to either 00 or 30 based on the picked time
+                        int adjustedMinutes = (pickedTime.minute < 15 || pickedTime.minute >= 45) ? 0 : 30;
+                        endTime = TimeOfDay(hour: pickedTime.hour, minute: adjustedMinutes);
                       });
                     }
                   },

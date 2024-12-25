@@ -19,6 +19,7 @@ import 'package:shop/utils/utils.dart';
 import 'package:shop/widgets/widgets.dart';
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:search_page/search_page.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class AllDealsPage extends StatefulWidget {
   @override
@@ -37,7 +38,8 @@ class _AllDealsPageState extends State<AllDealsPage> {
   Future<void> fetchAllDeals() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
@@ -45,7 +47,7 @@ class _AllDealsPageState extends State<AllDealsPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/view/deals'),
+        Uri.parse('$baseUrl/api/view/deals'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

@@ -21,6 +21,7 @@ import '../Feedback/feedback.dart';
 import '../Feedback/viewFeedback.dart';
 import '../reward/reward.dart';
 import '../screens/dashboardDealList.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 
@@ -243,14 +244,16 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
   Future<void> fetchBookings() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+   final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       // Handle missing token, e.g., redirect to login
       return;
     }
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/myBookings'),
+      
+      Uri.parse('$baseUrl/api/myBookings'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

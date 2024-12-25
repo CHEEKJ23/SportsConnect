@@ -12,7 +12,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/cubits/guest/guest_cubit.dart';
 import 'package:intl/intl.dart';
-
+import 'package:shop/utils/dio_client/dio_client.dart';
 class BookingPage extends StatefulWidget {
   static const routeName = "booking";
 
@@ -28,7 +28,9 @@ class _BookingPageState extends State<BookingPage> {
   TimeOfDay? endTime;
 
 Future<void> searchSportCenters() async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/search-sport-centers');
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+  final url = Uri.parse('$baseUrl/api/search-sport-centers');
     // final token = '58|xAOUuy6E7jZjG7LdA9CQZepRGVGbgWSXMZAb7r8c'; 
 
     // try {

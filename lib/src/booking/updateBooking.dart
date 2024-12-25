@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shop/src/booking/myBooking.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class UpdateBookingPage extends StatefulWidget {
   final int bookingId;
@@ -69,7 +70,9 @@ Future<void> _selectTime(BuildContext context, bool isStartTime) async {
 }
 
   Future<void> _updateBooking() async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/modifyBookings/${widget.bookingId}');
+     final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final url = Uri.parse('$baseUrl/api/modifyBookings/${widget.bookingId}');
        final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken'); 
     final response = await http.put(

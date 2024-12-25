@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class FeedbackListPage extends StatefulWidget {
   @override
@@ -21,7 +22,8 @@ class _FeedbackListPageState extends State<FeedbackListPage> {
   Future<void> fetchFeedback() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
@@ -29,7 +31,7 @@ class _FeedbackListPageState extends State<FeedbackListPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/get/feedback'),
+        Uri.parse('$baseUrl/api/get/feedback'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

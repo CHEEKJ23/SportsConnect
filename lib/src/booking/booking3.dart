@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/cubits/guest/guest_cubit.dart';
 import 'package:intl/intl.dart';
 import 'package:shop/src/booking/myBooking.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
+
 // void main() => runApp(SportsCenterApp());
 
 // class SportsCenterApp extends StatelessWidget {
@@ -25,13 +27,14 @@ class SportsCenterLayout extends StatefulWidget {
   final String selectedDate;
   final String startTime;
   final String endTime;
-
+  final String image;
     SportsCenterLayout({
     required this.sportCenterId,
     required this.selectedSport,
     required this.selectedDate,
     required this.startTime,
     required this.endTime,
+    required this.image,
   });
   @override
   _SportsCenterLayoutState createState() => _SportsCenterLayoutState();
@@ -45,7 +48,9 @@ class _SportsCenterLayoutState extends State<SportsCenterLayout> {
   // // String selectedDuration = "2 hours";
 
 Future<void> fetchAvailableCourts() async {
-  final url = Uri.parse('http://10.0.2.2:8000/api/sport-center/${widget.sportCenterId}/available-courts');
+   final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+  final url = Uri.parse('$baseUrl/api/sport-center/${widget.sportCenterId}/available-courts');
   
   try {
      final prefs = await SharedPreferences.getInstance();
@@ -139,11 +144,18 @@ Future<void> fetchAvailableCourts() async {
             ),
             SizedBox(height: 16),
             // Placeholder for the centre layout image
-            Image.asset(
-              'assets/images/coca-cola.png', // Replace with your actual image asset path
-              height: 200,
-              fit: BoxFit.cover,
-            ),
+              Container(
+                             width: double.infinity,
+                             height: 200,
+                             decoration: BoxDecoration(
+                               image: DecorationImage(
+                                 image: NetworkImage(
+        'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${widget.image ?? 'default.jpg'}',
+      ),
+                                 fit: BoxFit.cover,
+                               ),
+                             ),
+                           ),
             SizedBox(height: 32),
             Text(
               'Choose From These Available Slots',
@@ -222,7 +234,9 @@ String extractCourtId(String courtString) {
 }
 
   void _bookCourt(BuildContext context, List<String> selectedCourts) async {
-    final urll = Uri.parse('http://10.0.2.2:8000/api/book-court');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final urll = Uri.parse('$baseUrl/api/book-court');
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
   final userId = prefs.getInt('userId');

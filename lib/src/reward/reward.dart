@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class RewardScreen extends StatefulWidget {
   @override
@@ -22,14 +23,15 @@ class _RewardScreenState extends State<RewardScreen> {
   Future<void> _fetchUserPoints() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
     }
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/view/points'),
+      Uri.parse('$baseUrl/api/view/points'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -48,14 +50,15 @@ class _RewardScreenState extends State<RewardScreen> {
   Future<void> _fetchGifts() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
     }
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/view/gifts'),
+      Uri.parse('$baseUrl/api/view/gifts'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -74,14 +77,15 @@ class _RewardScreenState extends State<RewardScreen> {
   Future<void> _redeemGift(int giftId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
     }
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/redeem/gift'),
+      Uri.parse('$baseUrl/api/redeem/gift'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',

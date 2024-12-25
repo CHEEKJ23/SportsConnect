@@ -15,6 +15,7 @@ import 'package:shop/widgets/widgets.dart';
 // import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:search_page/search_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // Import flutter_bloc
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class JoinActivityPage extends StatefulWidget {
   @override
@@ -31,13 +32,14 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
   Future<void> fetchActivities() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    final url = Uri.parse('http://10.0.2.2:8000/api/activities/others');
+    final url = Uri.parse('$baseUrl/api/activities/others');
 
     try {
       final response = await http.get(
@@ -71,14 +73,15 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
    Future<void> fetchSpecificActivities(String query, String searchType) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
     // Construct URL based on the search type
-    String url = 'http://10.0.2.2:8000/api/activities/specific?$searchType=$query';
+    String url = '$baseUrl/api/activities/specific?$searchType=$query';
     print('Request URL: $url'); // Debug: Print the request URL
 
     try {
@@ -130,13 +133,14 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
   Future<void> joinActivity(int activityId, int userId, int playerQuantity) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    String url = 'http://10.0.2.2:8000/api/join/activities/$activityId';
+    String url = '$baseUrl/api/join/activities/$activityId';
     print('Join URL: $url'); // Debug: Print the join URL
 
     try {

@@ -159,6 +159,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class CreateDealPage extends StatefulWidget {
   @override
@@ -180,7 +181,8 @@ class _CreateDealPageState extends State<CreateDealPage> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
     final userId = prefs.getInt('userId');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null || userId == null) {
       print('Token or userId is null. Redirecting to login.');
       return;
@@ -188,7 +190,7 @@ class _CreateDealPageState extends State<CreateDealPage> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:8000/api/create/deals'),
+      Uri.parse('$baseUrl/api/create/deals'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';

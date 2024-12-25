@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/src/screens/dashboard.dart';
 import 'myRental.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class RentalDetails {
   final int sportCenterId;
@@ -12,6 +13,7 @@ class RentalDetails {
   final String endTime;
   int? equipmentID;
   int? quantityRented;
+  final String image;
 
   RentalDetails({
     required this.sportCenterId,
@@ -20,6 +22,7 @@ class RentalDetails {
     required this.endTime,
     this.equipmentID,
     this.quantityRented,
+    required this.image,
   });
 
   void setEquipmentID(int id) {
@@ -38,7 +41,9 @@ class ItemDetailPage extends StatelessWidget {
   ItemDetailPage({Key? key, required this.equipmentDetails, required this.rentalDetails}) : super(key: key);
 
   Future<void> rentEquipment(BuildContext context) async {
-    final url = Uri.parse('http://10.0.2.2:8000/api/equipment-rental/rent');
+      final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final url = Uri.parse('$baseUrl/api/equipment-rental/rent');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -188,20 +193,27 @@ ElevatedButton(
             // Image carousel placeholder
             Stack(
               children: [
-                // Placeholder for image carousel
-                HeaderTopCarouselWidget(),
-                // Container(
-                //   height: 200,
-                //   color: Colors.grey[300],
-                //   child: Center(child: Text("Image Carousel")),
-                // ),
+                Image.network(
+                  'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${equipmentDetails['image_path'] ?? 'default.jpg'}', 
+                width: double.infinity,
+                height: 400,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: double.infinity,
+                    height: 200,
+                    color: Colors.grey[300],
+                    child: Center(child: Text("Image not available")),
+                  );
+                },
+              ),
                 Positioned(
-                  top: 110,
+                  top: 170,
                   left: 16,
                   child: Icon(Icons.arrow_back_ios, color: Colors.black),
                 ),
                 Positioned(
-                  top: 110,
+                  top: 170,
                   right: 16,
                   child: Icon(Icons.arrow_forward_ios, color: Colors.black),
                 ),

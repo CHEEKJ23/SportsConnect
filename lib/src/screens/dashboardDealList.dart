@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop/blocs/chat/chat_bloc.dart';
 import 'package:shop/blocs/user/user_bloc.dart';
 import 'package:shop/screens/chat/chat_screen.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 
 class HorizontalDealsWidget extends StatefulWidget {
@@ -26,7 +27,8 @@ class _HorizontalDealsWidgetState extends State<HorizontalDealsWidget> {
   Future<void> fetchUserDeals() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
@@ -34,7 +36,7 @@ class _HorizontalDealsWidgetState extends State<HorizontalDealsWidget> {
 
     try {
       final response = await http.get(
-        Uri.parse('http://10.0.2.2:8000/api/view/deals'), // Adjust the endpoint as needed
+        Uri.parse('$baseUrl/api/view/deals'), // Adjust the endpoint as needed
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',

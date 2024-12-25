@@ -64,8 +64,10 @@ class EquipmentList extends StatelessWidget {
       date: rentalDetailsMap['date'] ?? '',
       startTime: rentalDetailsMap['startTime'] ?? '',
       endTime: rentalDetailsMap['endTime'] ?? '',
-      equipmentID: equipment['equipmentID'], // Optional, can be null
-      quantityRented: equipment['quantity_rented'], // Optional, can be null
+      equipmentID: equipment['equipmentID'], 
+      quantityRented: equipment['quantity_rented'], 
+      image: equipment['image_path'],
+
     );
 
     // Debug: Print the rental details being passed

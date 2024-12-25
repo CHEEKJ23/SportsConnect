@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class UserActivitiesScreen extends StatefulWidget {
   @override
@@ -24,13 +25,14 @@ class _UserActivitiesScreenState extends State<UserActivitiesScreen> {
   Future<void> fetchUserActivities() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    String url = 'http://10.0.2.2:8000/api/activities/mine';
+    String url = '$baseUrl/api/activities/mine';
     print('User Activities URL: $url');
 
     try {
@@ -67,13 +69,14 @@ class _UserActivitiesScreenState extends State<UserActivitiesScreen> {
  Future<void> fetchJoinedActivities() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    String url = 'http://10.0.2.2:8000/api/activities/joined';
+    String url = '$baseUrl/api/activities/joined';
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -104,13 +107,14 @@ class _UserActivitiesScreenState extends State<UserActivitiesScreen> {
 Future<void> cancelActivity(int activityId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    String url = 'http://10.0.2.2:8000/api/activities/cancel/$activityId';
+    String url = '$baseUrl/api/activities/cancel/$activityId';
     try {
       final response = await http.delete(
         Uri.parse(url),
@@ -142,13 +146,14 @@ Future<void> cancelActivity(int activityId) async {
   Future<void> unjoinActivity(int activityId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    String url = 'http://10.0.2.2:8000/api/activities/unjoin/$activityId';
+    String url = '$baseUrl/api/activities/unjoin/$activityId';
     try {
       final response = await http.delete(
         Uri.parse(url),

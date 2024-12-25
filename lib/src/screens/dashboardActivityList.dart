@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shop/blocs/chat/chat_bloc.dart';
 import 'package:shop/blocs/user/user_bloc.dart';
 import 'package:shop/screens/chat/chat_screen.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 
 class HorizontalActivitiesWidget extends StatefulWidget {
@@ -31,13 +32,14 @@ class _HorizontalActivitiesWidgetState extends State<HorizontalActivitiesWidget>
   Future<void> fetchActivities() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('No authentication token found. Redirecting to login.');
       return;
     }
 
-    final url = Uri.parse('http://10.0.2.2:8000/api/activities/others');
+    final url = Uri.parse('$baseUrl/api/activities/others');
 
     try {
       final response = await http.get(
@@ -78,7 +80,7 @@ Widget build(BuildContext context) {
   return activities.isEmpty
       ? Center(child: Text('No deals available.', style: TextStyle(fontSize: 16)))
       : SizedBox(
-          height: 290, // Adjust height as needed
+          height: 305, // Adjust height as needed
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: activities.length,

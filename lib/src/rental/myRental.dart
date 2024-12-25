@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
 import 'rentalCountdown.dart' ;
+import 'package:shop/utils/dio_client/dio_client.dart';
+
 class MyRentalsPage extends StatefulWidget {
   @override
   _MyRentalsPageState createState() => _MyRentalsPageState();
@@ -21,14 +23,15 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
   Future<void> fetchRentals() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       // Handle missing token, e.g., redirect to login
       return;
     }
 
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:8000/api/equipment-rental/my-rentals'),
+      Uri.parse('$baseUrl/api/equipment-rental/my-rentals'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -54,7 +57,8 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
   Future<void> sendReturnRequest(String rentalId) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Authentication token not found. Please log in again.')),
@@ -64,7 +68,7 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/api/rentals/return-request'),
+        Uri.parse('$baseUrl/api/rentals/return-request'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

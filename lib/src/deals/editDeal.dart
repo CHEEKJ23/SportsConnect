@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop/utils/dio_client/dio_client.dart';
 
 class EditDealPage extends StatefulWidget {
   final int dealID;
@@ -37,7 +38,8 @@ class _EditDealPageState extends State<EditDealPage> {
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
-
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     if (token == null) {
       print('Token is null. Redirecting to login.');
       return;
@@ -45,7 +47,7 @@ class _EditDealPageState extends State<EditDealPage> {
 
     final request = http.MultipartRequest(
       'POST', // Use 'PUT' or 'PATCH' if your API supports it
-      Uri.parse('http://10.0.2.2:8000/api/edit/deals/${widget.dealID}'),
+      Uri.parse('$baseUrl/api/edit/deals/${widget.dealID}'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';
