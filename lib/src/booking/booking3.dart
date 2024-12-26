@@ -42,6 +42,7 @@ class SportsCenterLayout extends StatefulWidget {
 
 class _SportsCenterLayoutState extends State<SportsCenterLayout> {
   List<String> availableSlots = [];
+  Map<String, int> slotToCourtId = {}; // Map to store the relationship between slot display and court_id
   Map<String, bool> selectedSlots = {};
   // // String selectedDate = "2024-11-10";
   // // String selectedTime = "10:00 AM";
@@ -89,10 +90,36 @@ Future<void> fetchAvailableCourts() async {
 
       if (data is List) {
 
-        setState(() {
-          availableSlots = data.map((court) => 'Court ${court['number']} - ${court['type']}').toList();
+        // setState(() {
+        //     availableSlots = data.map((court) {
+        //       final slotDisplay = 'Court ${court['number']} - ${court['type']}';
+        //       slotToCourtId[slotDisplay] = court['id']; // Store the court_id
+        //       return slotDisplay;
+        //     }).toList();
+        //     availableSlots.forEach((slot) => selectedSlots[slot] = false);
+        //   });
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+             setState(() {
+          availableSlots = data.map((court) => 'Court ${court['id']} - ${court['type']}- ${court['number']}').toList();
           availableSlots.forEach((slot) => selectedSlots[slot] = false);
         });
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+          //my legend eye
+
       } else {
         print('Unexpected data format');
       }
@@ -108,7 +135,55 @@ Future<void> fetchAvailableCourts() async {
 }
 
 
+ Future<void> _showUserPointsDialog(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+      final userId = prefs.getInt('userId');
 
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+ final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+      final response = await http.get(
+        
+        Uri.parse('$baseUrl/api/user/$userId/points'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final totalPoints = data['total_points'];
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Booking Successful'),
+              content: Text('Your current points: $totalPoints'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        throw Exception('Failed to load user points');
+      }
+    } catch (error) {
+      print('Error fetching user points: $error');
+      // Optionally show an error dialog
+    }
+  }
 
   @override
   void initState() {
@@ -240,66 +315,90 @@ String extractCourtId(String courtString) {
   }
 }
 
-  void _bookCourt(BuildContext context, List<String> selectedCourts) async {
-      final dioClient = DioClient();
+  Future<void> _bookCourt(BuildContext context, List<String> selectedCourts) async {
+  final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final urll = Uri.parse('$baseUrl/api/book-court');
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('authToken');
+  final url = Uri.parse('$baseUrl/api/book-court');
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('authToken');
   final userId = prefs.getInt('userId');
 
-    // await prefs.setInt('userId', user.id);
-  //  final userId = prefs.getInt('userId');
-
-
-    if (token == null) {
+  if (token == null) {
+    if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Authentication required.')),
       );
-      return;
     }
-//  print('Fetching available courts with:');
-//     print('URL: $url');
-//     print('sportType: ${widget.selectedSport}');
-//     print('date: ${widget.selectedDate}');
-//     print('startTime: ${widget.startTime}');
-//     print('endTime: ${widget.endTime}');
+    return;
+  }
 
-    try {
-      for (String court in selectedCourts) {
-        final courtId = extractCourtId(court); 
+  try {
+    for (String court in selectedCourts) {
+      final courtId = extractCourtId(court);
 
-        final response = await http.post(
-          urll,
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $token',
-          },
-          body: jsonEncode({
-            'user_id': userId, 
-            'sport_center_id': widget.sportCenterId,
-            'court_id': courtId,
-            'date': widget.selectedDate,
-            'startTime': widget.startTime,
-            'endTime': widget.endTime,
-          }),
-        );
+      // Print request details
+      print('Request URL: $url');
+      print('Request Headers: ${{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      }}');
+      print('Request Body: ${{
+        'user_id': userId,
+        'sport_center_id': widget.sportCenterId,
+        'court_id': courtId,
+        'date': widget.selectedDate,
+        'startTime': widget.startTime,
+        'endTime': widget.endTime,
+      }}');
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'user_id': userId,
+          'sport_center_id': widget.sportCenterId,
+          'court_id': courtId,
+          'date': widget.selectedDate,
+          'startTime': widget.startTime,
+          'endTime': widget.endTime,
+        }),
+      );
+
+      // Print response details
       print('Response Status Code: ${response.statusCode}');
+      print('Response Headers: ${response.headers}');
+      print('Response Body: ${response.body}');
 
-
-
-        if (response.statusCode == 201) {
-
-          print('Court booked successfully');
-        } else {
-          print('Error booking court: ${response.body}');
+      if (response.statusCode == 201) {
+        print('Court booked successfully');
+      } else if (response.statusCode == 302) {
+        print('Redirected to: ${response.headers['location']}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Redirected to: ${response.headers['location']}')),
+          );
+        }
+      } else {
+        print('Error booking court: ${response.body}');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error booking court: ${response.body}')),
+          );
         }
       }
-    } catch (error) {
-      
-      print('Error: $error');
+    }
+  } catch (error) {
+    print('Error: $error');
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $error')),
+      );
     }
   }
+}
 
 
    // Show confirmation prompt when "Next" button is pressed
