@@ -218,7 +218,7 @@ Widget headerTopCategories() {
 ),
 Builder(
   builder: (context) {
-    return headerCategoryItem('Rental', Fryo.move, onPressed: () {
+    return headerCategoryItem('Rental', Fryo.calendar, onPressed: () {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RentalPage()),

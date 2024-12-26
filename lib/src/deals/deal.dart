@@ -67,12 +67,17 @@ class _AllDealsPageState extends State<AllDealsPage> {
     }
   }
 
-  Widget _buildDealCard(Map<String, dynamic> deal) {
-    final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
 
-    return Card(
-      child: ListTile(
-        leading: deal['image_path'] != null
+Widget _buildDealCard(Map<String, dynamic> deal) {
+  final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+
+  return Card(
+    child: ListTile(
+      leading: GestureDetector(
+        onTap: () {
+          _showImageDialog(context, imageUrl);
+        },
+        child: deal['image_path'] != null
             ? Image.network(
                 imageUrl,
                 width: 50,
@@ -83,43 +88,76 @@ class _AllDealsPageState extends State<AllDealsPage> {
                 },
               )
             : Icon(Icons.image, size: 50),
-        title: Text(deal['title'] ?? 'No Title'),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Price: \$${deal['price'] ?? 'N/A'}'),
-            Text(deal['description'] ?? 'No description available'),
-            Text('Seller: ${deal['user']['name'] ?? 'Unknown'}'),
-          ],
-        ),
-        trailing: IconButton(
-          icon: Icon(Icons.message, color: Colors.blue),
-          onPressed: () {
-            // Navigate to chat screen with the seller
-            final userId = deal['userID'];
-            if (userId == null) {
-              print('User ID is null for this deal');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('This deal does not have a valid user')),
-              );
-              return;
-            }
-
-            final user = getUserById(userId);
-            if (user != null) {
-              context.read<ChatBloc>().add(UserSelected(user));
-              Navigator.of(context).pushNamed(ChatScreen.routeName);
-            } else {
-              print('User not found for ID: $userId');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('User not found for this deal')),
-              );
-            }
-          },
-        ),
       ),
-    );
-  }
+      title: Text(deal['title'] ?? 'No Title'),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Price: \$${deal['price'] ?? 'N/A'}'),
+          Text(deal['description'] ?? 'No description available'),
+          Text('Seller: ${deal['user']['name'] ?? 'Unknown'}'),
+        ],
+      ),
+      trailing: IconButton(
+        icon: Icon(Icons.message, color: Colors.blue),
+        onPressed: () {
+          // Navigate to chat screen with the seller
+          final userId = deal['userID'];
+          if (userId == null) {
+            print('User ID is null for this deal');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('This deal does not have a valid user')),
+            );
+            return;
+          }
+
+          final user = getUserById(userId);
+          if (user != null) {
+            context.read<ChatBloc>().add(UserSelected(user));
+            Navigator.of(context).pushNamed(ChatScreen.routeName);
+          } else {
+            print('User not found for ID: $userId');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('User not found for this deal')),
+            );
+          }
+        },
+      ),
+    ),
+  );
+}
+
+void _showImageDialog(BuildContext context, String imageUrl) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return Dialog(
+        child: Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.broken_image, size: 100);
+                },
+              ),
+              SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Close'),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
 
   UserEntity? getUserById(int? userId) {
     if (userId == null) return null;

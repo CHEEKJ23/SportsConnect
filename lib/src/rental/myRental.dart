@@ -5,7 +5,93 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../booking/myBooking.dart' as myBooking; //side bar drawer is here
 import 'rentalCountdown.dart' ;
 import 'package:shop/utils/dio_client/dio_client.dart';
+class UserPointsDisplay extends StatefulWidget {
+  @override
+  _UserPointsDisplayState createState() => _UserPointsDisplayState();
+}
 
+class _UserPointsDisplayState extends State<UserPointsDisplay> {
+  int? totalPoints;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserPoints();
+  }
+
+  Future<void> _fetchUserPoints() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+      final userId = prefs.getInt('userId');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+  final dioClient = DioClient();
+ final baseUrl = dioClient.baseUrl;
+      final response = await http.get(
+   Uri.parse('$baseUrl/api/user/$userId/points'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          totalPoints = data['total_points'];
+        });
+      } else {
+        throw Exception('Failed to load user points');
+      }
+    } catch (error) {
+      print('Error fetching user points: $error');
+    }
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Container(
+    margin: EdgeInsets.all(16.0),
+    padding: EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.blueAccent,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 8.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.white,
+          size: 32.0,
+        ),
+        totalPoints != null
+            ? Text(
+                'Your Points: $totalPoints',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+      ],
+    ),
+  );
+}
+}
 class MyRentalsPage extends StatefulWidget {
   @override
   _MyRentalsPageState createState() => _MyRentalsPageState();
@@ -125,6 +211,7 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
             )
           : ListView(
               children: [
+                UserPointsDisplay(),
                 // Ongoing Rentals
                 if (ongoingRentals.isNotEmpty) ...[
                   Padding(

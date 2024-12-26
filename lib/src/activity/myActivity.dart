@@ -3,7 +3,93 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop/utils/dio_client/dio_client.dart';
+class UserPointsDisplay extends StatefulWidget {
+  @override
+  _UserPointsDisplayState createState() => _UserPointsDisplayState();
+}
 
+class _UserPointsDisplayState extends State<UserPointsDisplay> {
+  int? totalPoints;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserPoints();
+  }
+
+  Future<void> _fetchUserPoints() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+      final userId = prefs.getInt('userId');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+  final dioClient = DioClient();
+ final baseUrl = dioClient.baseUrl;
+      final response = await http.get(
+   Uri.parse('$baseUrl/api/user/$userId/points'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          totalPoints = data['total_points'];
+        });
+      } else {
+        throw Exception('Failed to load user points');
+      }
+    } catch (error) {
+      print('Error fetching user points: $error');
+    }
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Container(
+    margin: EdgeInsets.all(16.0),
+    padding: EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.blueAccent,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 8.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.white,
+          size: 32.0,
+        ),
+        totalPoints != null
+            ? Text(
+                'Your Points: $totalPoints',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+      ],
+    ),
+  );
+}
+}
 class UserActivitiesScreen extends StatefulWidget {
   @override
   _UserActivitiesScreenState createState() => _UserActivitiesScreenState();
@@ -196,12 +282,19 @@ Future<void> cancelActivity(int activityId) async {
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            buildSelfCreatedActivityList(userActivities, 'No created activities found.'),
-            buildJoinedActivityList(joinedActivities, 'No joined activities found.'),
-          ],
-        ),
+       body: Column(
+        children: [
+          UserPointsDisplay(), // Add the UserPointsDisplay widget here
+          Expanded(
+            child: TabBarView(
+              children: [
+                buildSelfCreatedActivityList(userActivities, 'No created activities found.'),
+                buildJoinedActivityList(joinedActivities, 'No joined activities found.'),
+              ],
+            ),
+          ),
+        ],
+      ),
       ),
     );
   }

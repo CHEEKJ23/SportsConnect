@@ -227,18 +227,110 @@ class NavigationDrawer extends StatelessWidget {
   }
 }
 
+class UserPointsDisplay extends StatefulWidget {
+  @override
+  _UserPointsDisplayState createState() => _UserPointsDisplayState();
+}
+
+class _UserPointsDisplayState extends State<UserPointsDisplay> {
+  int? totalPoints;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserPoints();
+  }
+
+  Future<void> _fetchUserPoints() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('authToken');
+      final userId = prefs.getInt('userId');
+
+      if (token == null) {
+        throw Exception('No authentication token found');
+      }
+  final dioClient = DioClient();
+ final baseUrl = dioClient.baseUrl;
+      final response = await http.get(
+   Uri.parse('$baseUrl/api/user/$userId/points'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          totalPoints = data['total_points'];
+        });
+      } else {
+        throw Exception('Failed to load user points');
+      }
+    } catch (error) {
+      print('Error fetching user points: $error');
+    }
+  }
+
+  @override
+Widget build(BuildContext context) {
+  return Container(
+    margin: EdgeInsets.all(16.0),
+    padding: EdgeInsets.all(16.0),
+    decoration: BoxDecoration(
+      color: Colors.blueAccent,
+      borderRadius: BorderRadius.circular(12.0),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black26,
+          blurRadius: 8.0,
+          offset: Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(
+          Icons.star,
+          color: Colors.white,
+          size: 32.0,
+        ),
+        totalPoints != null
+            ? Text(
+                'Your Points: $totalPoints',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+            : CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+      ],
+    ),
+  );
+}
+}
+
 class MyBookingsPage extends StatefulWidget {
+  
   @override
   _MyBookingsPageState createState() => _MyBookingsPageState();
 }
 
 class _MyBookingsPageState extends State<MyBookingsPage> {
   List<dynamic> bookings = [];
+  int? totalPoints;
 
   @override
   void initState() {
     super.initState();
     fetchBookings();
+   
+
   }
 
   Future<void> fetchBookings() async {
@@ -276,6 +368,71 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
   }
   }
 
+//  Future<void> _fetchUserPoints() async {
+//     try {
+//       final prefs = await SharedPreferences.getInstance();
+//       final token = prefs.getString('authToken');
+//       final userId = prefs.getInt('userId');
+
+//       if (token == null) {
+//         throw Exception('No authentication token found');
+//       }
+//  final dioClient = DioClient();
+//   final baseUrl = dioClient.baseUrl;
+//       final response = await http.get(
+        
+//         Uri.parse('$baseUrl/api/user/$userId/points'),
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer $token',
+//         },
+//       );
+
+//       if (response.statusCode == 200) {
+//         final data = json.decode(response.body);
+//         final totalPoints = data['total_points'];
+
+//         showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AlertDialog(
+//               title: Text('Booking Successful'),
+//               content: Text('Your current points: $totalPoints'),
+//               actions: [
+//                 TextButton(
+//                   onPressed: () {
+//                     Navigator.of(context).pop();
+//                   },
+//                   child: Text('OK'),
+//                 ),
+//               ],
+//             );
+//           },
+//         );
+//       } else {
+//         throw Exception('Failed to load user points');
+//       }
+//     } catch (error) {
+//       print('Error fetching user points: $error');
+//       // Optionally show an error dialog
+//     }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: EdgeInsets.all(16.0),
+//       color: Colors.blueAccent,
+//       child: totalPoints != null
+//           ? Text(
+//               'Your Points: $totalPoints',
+//               style: TextStyle(color: Colors.white, fontSize: 16),
+//             )
+//           : CircularProgressIndicator(),
+//     );
+//   }
+//   }
+
+
 @override
 
 Widget build(BuildContext context) {
@@ -306,6 +463,7 @@ Widget build(BuildContext context) {
           )
           : ListView(
       children: [
+         UserPointsDisplay(), 
         // Upcoming Bookings
         if (upcomingBookings.isNotEmpty) ...[
           Padding(

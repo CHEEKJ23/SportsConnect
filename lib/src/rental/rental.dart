@@ -215,9 +215,9 @@ class _RentalPageState extends State<RentalPage> {
                   onPressed: () async {
                     final DateTime? pickedDate = await showDatePicker(
                       context: context,
-                      initialDate: selectedDate ?? DateTime.now(),
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2030),
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2101),
                     );
                     if (pickedDate != null && pickedDate != selectedDate) {
                       setState(() {
@@ -285,7 +285,16 @@ class _RentalPageState extends State<RentalPage> {
                 ),
               ],
             ),
-            SizedBox(height: 16.0),
+          
+              SizedBox(height: 16,),
+                Row(children: [
+          Text(
+      "Note: The system will only accept times at 00 or 30 minutes.",
+      style: TextStyle(fontSize: 13, color: Colors.grey),
+),
+        ],),
+              SizedBox(height: 10,),
+
             ElevatedButton(
               onPressed: checkAvailability,
               child: Text('Check Availability'),

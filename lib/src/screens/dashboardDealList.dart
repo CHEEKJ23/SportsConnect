@@ -77,7 +77,7 @@ Widget build(BuildContext context) {
                   'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
 
               return Container(
-                width: 180, // Adjust width as needed
+                width: 205, // Adjust width as needed
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
                   color: Colors.white,

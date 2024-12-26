@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/dashboard.dart';
 import 'package:shop/utils/dio_client/dio_client.dart';
-
+import 'myActivity.dart';
 class CreateActivityPage extends StatefulWidget {
   @override
   _CreateActivityPageState createState() => _CreateActivityPageState();
@@ -166,7 +166,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
         );
             Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(builder: (context) => UserActivitiesScreen()),
         );
       } else {
         print('Failed to create activity. Status code: ${response.statusCode}');
@@ -268,7 +268,8 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   );
                   if (picked != null && picked != startTime) {
                     setState(() {
-                      startTime = picked;
+                      int adjustedMinutes = (picked.minute < 15 || picked.minute >= 45) ? 0 : 30;
+                        startTime = TimeOfDay(hour: picked.hour, minute: adjustedMinutes);
                     });
                   }
                 },
@@ -283,10 +284,19 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
                   );
                   if (picked != null && picked != endTime) {
                     setState(() {
-                      endTime = picked;
+                      int adjustedMinutes = (picked.minute < 15 || picked.minute >= 45) ? 0 : 30;
+                        endTime = TimeOfDay(hour: picked.hour, minute: adjustedMinutes);
                     });
                   }
                 },
+                
+              ),
+              ListTile(
+                title: Text(
+                        "Note: The system will only accept times at 00 or 30 minutes.",
+                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                  ),
+                trailing: Icon(Icons.warning),
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Player Quantity'),

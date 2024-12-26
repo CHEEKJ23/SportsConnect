@@ -122,9 +122,9 @@ final formattedDate = selectedDate != null ? DateFormat('yyyy-MM-dd').format(sel
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
     );
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {

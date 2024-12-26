@@ -107,6 +107,9 @@ Future<void> fetchAvailableCourts() async {
   }
 }
 
+
+
+
   @override
   void initState() {
     super.initState();
@@ -133,7 +136,7 @@ Future<void> fetchAvailableCourts() async {
       appBar: AppBar(
         title: Text('Centre Layout'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,8 +208,12 @@ Future<void> fetchAvailableCourts() async {
 
   // Build the list of available slot checkboxes
   Widget _buildAvailableSlots() {
-    return Column(
-      children: availableSlots.map((String courtName) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(), // Prevents the ListView from scrolling independently
+      itemCount: availableSlots.length,
+      itemBuilder: (context, index) {
+        final courtName = availableSlots[index];
         return CheckboxListTile(
           title: Text(courtName),
           value: selectedSlots[courtName],
@@ -217,7 +224,7 @@ Future<void> fetchAvailableCourts() async {
           },
           controlAffinity: ListTileControlAffinity.leading,
         );
-      }).toList(),
+      },
     );
   }
 
@@ -295,7 +302,7 @@ String extractCourtId(String courtString) {
   }
 
 
-  // Show confirmation prompt when "Next" button is pressed
+   // Show confirmation prompt when "Next" button is pressed
   void _showConfirmationPrompt(BuildContext context) {
     // Get selected courts
     List<String> selectedCourts = selectedSlots.entries
@@ -366,6 +373,7 @@ String extractCourtId(String courtString) {
         );
       },
     );
+    // _showUserPointsDialog(context);
   }
 
   // Optional: Show a success message after confirming
@@ -376,5 +384,6 @@ String extractCourtId(String courtString) {
         duration: Duration(seconds: 2),
       ),
     );
-  }
+  
+}
 }
