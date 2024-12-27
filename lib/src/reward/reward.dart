@@ -31,7 +31,7 @@ class _RewardScreenState extends State<RewardScreen> {
     }
 
     final response = await http.get(
-      Uri.parse('$baseUrl/api/view/points'),
+      Uri.parse('$baseUrl:8000/api/view/points'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -58,7 +58,7 @@ class _RewardScreenState extends State<RewardScreen> {
     }
 
     final response = await http.get(
-      Uri.parse('$baseUrl/api/view/gifts'),
+      Uri.parse('$baseUrl:8000/api/view/gifts'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -85,7 +85,7 @@ class _RewardScreenState extends State<RewardScreen> {
     }
 
     final response = await http.post(
-      Uri.parse('$baseUrl/api/redeem/gift'),
+      Uri.parse('$baseUrl:8000/api/redeem/gift'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -108,6 +108,8 @@ class _RewardScreenState extends State<RewardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     return Scaffold(
       appBar: AppBar(title: Text('Rewards')),
       body: Column(
@@ -121,7 +123,7 @@ class _RewardScreenState extends State<RewardScreen> {
               itemCount: gifts.length,
               itemBuilder: (context, index) {
                 final gift = gifts[index];
-                final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${gift['image_path']}';
+                final imageUrl = '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${gift['image_path']}';
 
                 return Card(
                   child: ListTile(

@@ -31,7 +31,7 @@ class _UserPointsDisplayState extends State<UserPointsDisplay> {
   final dioClient = DioClient();
  final baseUrl = dioClient.baseUrl;
       final response = await http.get(
-   Uri.parse('$baseUrl/api/user/$userId/points'),
+   Uri.parse('$baseUrl:8000/api/user/$userId/points'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -126,7 +126,7 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/view/my-deals'),
+        Uri.parse('$baseUrl:8000/api/view/my-deals'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
 
     try {
       final response = await http.delete(
-        Uri.parse('$baseUrl/api/delete/deals/$dealID'),
+        Uri.parse('$baseUrl:8000/api/delete/deals/$dealID'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -213,7 +213,9 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
 
   Widget _buildDealCard(Map<String, dynamic> deal) {
     final status = deal['status']?.toString().toLowerCase() ?? 'pending';
-    final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+     final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final imageUrl = '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
 
 
     return Card(

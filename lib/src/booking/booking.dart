@@ -30,7 +30,7 @@ class _BookingPageState extends State<BookingPage> {
 Future<void> searchSportCenters() async {
   final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-  final url = Uri.parse('$baseUrl/api/search-sport-centers');
+  final url = Uri.parse('$baseUrl:8000/api/search-sport-centers');
     // final token = '58|xAOUuy6E7jZjG7LdA9CQZepRGVGbgWSXMZAb7r8c'; 
 
     // try {
@@ -306,7 +306,7 @@ int adjustedEndMinutes = (endTimeOfDay.minute < 15 || endTimeOfDay.minute >= 45)
                 Row(children: [
           Text(
       "Note: The system will only accept times at 00 or 30 minutes.",
-      style: TextStyle(fontSize: 13, color: Colors.grey),
+      style: TextStyle(fontSize: 11, color: Colors.grey),
 ),
         ],),
       ]),

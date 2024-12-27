@@ -8,7 +8,8 @@ import 'package:shop/blocs/chat/chat_bloc.dart';
 import 'package:shop/blocs/user/user_bloc.dart';
 import 'package:shop/screens/chat/chat_screen.dart';
 import 'package:shop/utils/dio_client/dio_client.dart';
-
+ final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
 
 class HorizontalDealsWidget extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _HorizontalDealsWidgetState extends State<HorizontalDealsWidget> {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/view/deals'), // Adjust the endpoint as needed
+        Uri.parse('$baseUrl:8000/api/view/deals'), // Adjust the endpoint as needed
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -74,7 +75,7 @@ Widget build(BuildContext context) {
             itemBuilder: (context, index) {
               final deal = userDeals[index];
               final imageUrl =
-                  'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+                  '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
 
               return Container(
                 width: 205, // Adjust width as needed

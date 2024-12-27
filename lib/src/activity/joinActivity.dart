@@ -39,7 +39,7 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
       return;
     }
 
-    final url = Uri.parse('$baseUrl/api/activities/others');
+    final url = Uri.parse('$baseUrl:8000/api/activities/others');
 
     try {
       final response = await http.get(
@@ -81,7 +81,7 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
     }
 
     // Construct URL based on the search type
-    String url = '$baseUrl/api/activities/specific?$searchType=$query';
+    String url = '$baseUrl:8000/api/activities/specific?$searchType=$query';
     print('Request URL: $url'); // Debug: Print the request URL
 
     try {
@@ -140,7 +140,7 @@ class _JoinActivityPageState extends State<JoinActivityPage> {
       return;
     }
 
-    String url = '$baseUrl/api/join/activities/$activityId';
+    String url = '$baseUrl:8000/api/join/activities/$activityId';
     print('Join URL: $url'); // Debug: Print the join URL
 
     try {

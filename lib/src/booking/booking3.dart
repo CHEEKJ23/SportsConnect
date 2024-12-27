@@ -51,7 +51,7 @@ class _SportsCenterLayoutState extends State<SportsCenterLayout> {
 Future<void> fetchAvailableCourts() async {
    final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-  final url = Uri.parse('$baseUrl/api/sport-center/${widget.sportCenterId}/available-courts');
+  final url = Uri.parse('$baseUrl:8000/api/sport-center/${widget.sportCenterId}/available-courts');
   
   try {
      final prefs = await SharedPreferences.getInstance();
@@ -148,7 +148,7 @@ Future<void> fetchAvailableCourts() async {
   final baseUrl = dioClient.baseUrl;
       final response = await http.get(
         
-        Uri.parse('$baseUrl/api/user/$userId/points'),
+        Uri.parse('$baseUrl:8000/api/user/$userId/points'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -228,7 +228,7 @@ Future<void> fetchAvailableCourts() async {
                              decoration: BoxDecoration(
                                image: DecorationImage(
                                  image: NetworkImage(
-        'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${widget.image ?? 'default.jpg'}',
+        '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${widget.image ?? 'default.jpg'}',
       ),
                                  fit: BoxFit.cover,
                                ),
@@ -318,7 +318,7 @@ String extractCourtId(String courtString) {
   Future<void> _bookCourt(BuildContext context, List<String> selectedCourts) async {
   final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-  final url = Uri.parse('$baseUrl/api/book-court');
+  final url = Uri.parse('$baseUrl:8000/api/book-court');
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('authToken');
   final userId = prefs.getInt('userId');

@@ -31,7 +31,7 @@ class _UserPointsDisplayState extends State<UserPointsDisplay> {
   final dioClient = DioClient();
  final baseUrl = dioClient.baseUrl;
       final response = await http.get(
-   Uri.parse('$baseUrl/api/user/$userId/points'),
+   Uri.parse('$baseUrl:8000/api/user/$userId/points'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -117,7 +117,7 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
     }
 
     final response = await http.get(
-      Uri.parse('$baseUrl/api/equipment-rental/my-rentals'),
+      Uri.parse('$baseUrl:8000/api/equipment-rental/my-rentals'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -154,7 +154,7 @@ class _MyRentalsPageState extends State<MyRentalsPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/rentals/return-request'),
+        Uri.parse('$baseUrl:8000/api/rentals/return-request'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

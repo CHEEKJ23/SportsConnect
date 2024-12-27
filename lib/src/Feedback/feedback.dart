@@ -28,7 +28,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/post/feedback'),
+        Uri.parse('$baseUrl:8000/api/post/feedback'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

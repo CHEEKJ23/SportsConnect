@@ -35,7 +35,7 @@ class _CreateDealPageState extends State<CreateDealPage> {
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse('$baseUrl/api/create/deals'),
+      Uri.parse('$baseUrl:8000/api/create/deals'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';

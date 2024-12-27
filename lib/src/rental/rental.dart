@@ -41,7 +41,7 @@ class _RentalPageState extends State<RentalPage> {
   Future<void> fetchSportsCenters(String location) async {
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final url = Uri.parse('$baseUrl/api/equipment-rental/get-sports-centers?location=$location');
+    final url = Uri.parse('$baseUrl:8000/api/equipment-rental/get-sports-centers?location=$location');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -81,7 +81,7 @@ class _RentalPageState extends State<RentalPage> {
   Future<void> checkAvailability() async {
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final url = Uri.parse('$baseUrl/api/equipment-rental/check-availability');
+    final url = Uri.parse('$baseUrl:8000/api/equipment-rental/check-availability');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -290,7 +290,7 @@ class _RentalPageState extends State<RentalPage> {
                 Row(children: [
           Text(
       "Note: The system will only accept times at 00 or 30 minutes.",
-      style: TextStyle(fontSize: 13, color: Colors.grey),
+      style: TextStyle(fontSize: 11, color: Colors.grey),
 ),
         ],),
               SizedBox(height: 10,),

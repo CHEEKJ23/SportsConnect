@@ -29,7 +29,7 @@ class _UserPointsDisplayState extends State<UserPointsDisplay> {
   final dioClient = DioClient();
  final baseUrl = dioClient.baseUrl;
       final response = await http.get(
-   Uri.parse('$baseUrl/api/user/$userId/points'),
+   Uri.parse('$baseUrl:8000/api/user/$userId/points'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -118,7 +118,7 @@ class _UserActivitiesScreenState extends State<UserActivitiesScreen> {
       return;
     }
 
-    String url = '$baseUrl/api/activities/mine';
+    String url = '$baseUrl:8000/api/activities/mine';
     print('User Activities URL: $url');
 
     try {
@@ -162,7 +162,7 @@ class _UserActivitiesScreenState extends State<UserActivitiesScreen> {
       return;
     }
 
-    String url = '$baseUrl/api/activities/joined';
+    String url = '$baseUrl:8000/api/activities/joined';
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -200,7 +200,7 @@ Future<void> cancelActivity(int activityId) async {
       return;
     }
 
-    String url = '$baseUrl/api/activities/cancel/$activityId';
+    String url = '$baseUrl:8000/api/activities/cancel/$activityId';
     try {
       final response = await http.delete(
         Uri.parse(url),
@@ -239,7 +239,7 @@ Future<void> cancelActivity(int activityId) async {
       return;
     }
 
-    String url = '$baseUrl/api/activities/unjoin/$activityId';
+    String url = '$baseUrl:8000/api/activities/unjoin/$activityId';
     try {
       final response = await http.delete(
         Uri.parse(url),

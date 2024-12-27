@@ -39,7 +39,7 @@ class _HorizontalActivitiesWidgetState extends State<HorizontalActivitiesWidget>
       return;
     }
 
-    final url = Uri.parse('$baseUrl/api/activities/others');
+    final url = Uri.parse('$baseUrl:8000/api/activities/others');
 
     try {
       final response = await http.get(

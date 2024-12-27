@@ -30,7 +30,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   Future<void> fetchSportsCenters(String location) async {
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final url = Uri.parse('$baseUrl/api/equipment-rental/get-sports-centers?location=$location');
+    final url = Uri.parse('$baseUrl:8000/api/equipment-rental/get-sports-centers?location=$location');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -69,7 +69,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   Future<void> fetchSportTypes(int sportCenterId) async {
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-  final url = Uri.parse('$baseUrl/api/available-sport-types/$sportCenterId');
+  final url = Uri.parse('$baseUrl:8000/api/available-sport-types/$sportCenterId');
   try {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken');
@@ -152,7 +152,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
   final baseUrl = dioClient.baseUrl;
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/api/create/activities'),
+        Uri.parse('$baseUrl:8000/api/create/activities'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -294,7 +294,7 @@ class _CreateActivityPageState extends State<CreateActivityPage> {
               ListTile(
                 title: Text(
                         "Note: The system will only accept times at 00 or 30 minutes.",
-                        style: TextStyle(fontSize: 13, color: Colors.grey),
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
                   ),
                 trailing: Icon(Icons.warning),
               ),

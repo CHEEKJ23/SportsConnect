@@ -253,7 +253,7 @@ class _UserPointsDisplayState extends State<UserPointsDisplay> {
   final dioClient = DioClient();
  final baseUrl = dioClient.baseUrl;
       final response = await http.get(
-   Uri.parse('$baseUrl/api/user/$userId/points'),
+   Uri.parse('$baseUrl:8000/api/user/$userId/points'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -272,6 +272,9 @@ class _UserPointsDisplayState extends State<UserPointsDisplay> {
       print('Error fetching user points: $error');
     }
   }
+
+
+
 
   @override
 Widget build(BuildContext context) {
@@ -324,14 +327,57 @@ class MyBookingsPage extends StatefulWidget {
 class _MyBookingsPageState extends State<MyBookingsPage> {
   List<dynamic> bookings = [];
   int? totalPoints;
-
+  String? bookingId;
   @override
   void initState() {
     super.initState();
     fetchBookings();
-   
-
   }
+
+
+Future<void> cancelBooking(BuildContext context, int bookingId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('authToken');
+  final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+
+  if (token == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Authentication required.')),
+    );
+    return;
+  }
+
+  final url = Uri.parse('$baseUrl:8000/api/bookings/$bookingId/cancel');
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+     print('Response Status Code: ${response.statusCode}'); // Debug: Log status code
+    print('Response Body: ${response.body}');
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+    } else {
+      final responseData = json.decode(response.body);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(responseData['message'])),
+      );
+    }
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('An error occurred: $error')),
+    );
+  }
+}
+
 
   Future<void> fetchBookings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -345,7 +391,7 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
 
     final response = await http.get(
       
-      Uri.parse('$baseUrl/api/myBookings'),
+      Uri.parse('$baseUrl:8000/api/myBookings'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -368,69 +414,7 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
   }
   }
 
-//  Future<void> _fetchUserPoints() async {
-//     try {
-//       final prefs = await SharedPreferences.getInstance();
-//       final token = prefs.getString('authToken');
-//       final userId = prefs.getInt('userId');
 
-//       if (token == null) {
-//         throw Exception('No authentication token found');
-//       }
-//  final dioClient = DioClient();
-//   final baseUrl = dioClient.baseUrl;
-//       final response = await http.get(
-        
-//         Uri.parse('$baseUrl/api/user/$userId/points'),
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': 'Bearer $token',
-//         },
-//       );
-
-//       if (response.statusCode == 200) {
-//         final data = json.decode(response.body);
-//         final totalPoints = data['total_points'];
-
-//         showDialog(
-//           context: context,
-//           builder: (BuildContext context) {
-//             return AlertDialog(
-//               title: Text('Booking Successful'),
-//               content: Text('Your current points: $totalPoints'),
-//               actions: [
-//                 TextButton(
-//                   onPressed: () {
-//                     Navigator.of(context).pop();
-//                   },
-//                   child: Text('OK'),
-//                 ),
-//               ],
-//             );
-//           },
-//         );
-//       } else {
-//         throw Exception('Failed to load user points');
-//       }
-//     } catch (error) {
-//       print('Error fetching user points: $error');
-//       // Optionally show an error dialog
-//     }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: EdgeInsets.all(16.0),
-//       color: Colors.blueAccent,
-//       child: totalPoints != null
-//           ? Text(
-//               'Your Points: $totalPoints',
-//               style: TextStyle(color: Colors.white, fontSize: 16),
-//             )
-//           : CircularProgressIndicator(),
-//     );
-//   }
-//   }
 
 
 @override
@@ -492,7 +476,18 @@ Widget build(BuildContext context) {
     ),
   );
 }
+bool _isNextDay(String startTime, String endTime) {
+  final start = _parseTime(startTime);
+  final end = _parseTime(endTime);
+  return end.isBefore(start);
+}
 
+DateTime _parseTime(String time) {
+  final parts = time.split(':');
+  final hour = int.parse(parts[0]);
+  final minute = int.parse(parts[1]);
+  return DateTime(0, 0, 0, hour, minute);
+}
 // Helper method to build a booking card
 Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
   return Card(
@@ -512,13 +507,21 @@ Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
           ),
           SizedBox(height: 8),
           Text(
+            'Court Number: ${booking['court_number']}',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
             'Date: ${booking['date']}',
             style: TextStyle(fontSize: 14),
           ),
-          Text(
-            'Time: ${booking['startTime']} - ${booking['endTime']}',
-            style: TextStyle(fontSize: 14),
-          ),
+        Text(
+  'Time: ${booking['startTime']} - ${booking['endTime']}${_isNextDay(booking['startTime'], booking['endTime']) ? ' (next day)' : ''}',
+  style: TextStyle(fontSize: 14),
+),
           SizedBox(height: 8),
           Text(
             'Sport Center: ${booking['sport_center_name']}',
@@ -571,12 +574,10 @@ Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
                   },
                   child: Icon(Icons.edit),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Add your logic for the third button here
-                  },
-                  child: Icon(Icons.cancel),
-                ),
+               ElevatedButton(
+  onPressed: () => cancelBooking(context, booking['id']), // Pass bookingId here
+  child: Icon(Icons.cancel),
+),
               ],
             ),
           ],

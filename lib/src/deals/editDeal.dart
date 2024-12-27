@@ -47,7 +47,7 @@ class _EditDealPageState extends State<EditDealPage> {
 
     final request = http.MultipartRequest(
       'POST', // Use 'PUT' or 'PATCH' if your API supports it
-      Uri.parse('$baseUrl/api/edit/deals/${widget.dealID}'),
+      Uri.parse('$baseUrl:8000/api/edit/deals/${widget.dealID}'),
     );
 
     request.headers['Authorization'] = 'Bearer $token';

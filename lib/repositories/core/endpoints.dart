@@ -1,6 +1,6 @@
 class Endpoints {
   /// Current Api Version
-  static const _apiVersion = "/api";
+  static const _apiVersion = ":8000/api";
 
   /// Auth
   static const _baseAuth = "$_apiVersion/auth";

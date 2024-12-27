@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../booking/booking.dart';
 import '../booking/booking3.dart';
 import 'package:shop/utils/dio_client/dio_client.dart';
-
+import 'package:shop/utils/dio_client/dio_client.dart';
+ final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
 
 
 class SportCenterList extends StatelessWidget {
@@ -20,7 +22,7 @@ SportCenterList(this.sportsCenters);
       body: sportsCenters.isEmpty
           ? Center(
               child: Text(
-                'No Sports Centers Available',
+                'No Sports Centers or Sports Type Available',
                 style: TextStyle(fontSize: 18.0, color: Colors.grey[600]),
               ),
             )
@@ -43,7 +45,8 @@ SportCenterList(this.sportsCenters);
                              decoration: BoxDecoration(
                                image: DecorationImage(
                                  image: NetworkImage(
-        'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${item['image'] ?? 'default.jpg'}',
+                                  
+        '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${item['image'] ?? 'default.jpg'}',
       ),
                                  fit: BoxFit.cover,
                                ),

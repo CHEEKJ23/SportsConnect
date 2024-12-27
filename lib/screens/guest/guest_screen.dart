@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shop/cubits/cubits.dart';
-import 'package:shop/screens/screens.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:shop/cubits/cubits.dart';
 import 'package:shop/src/screens/dashboard.dart';
-import 'package:shop/src/shared/styles.dart';
+
 class GuestScreen extends StatelessWidget {
   const GuestScreen({super.key});
 
@@ -17,16 +16,12 @@ class GuestScreen extends StatelessWidget {
     return FlutterLogin(
       scrollable: true,
       hideForgotPasswordButton: true,
-      title: 'SportsConnect',
+      logo: const AssetImage('assets/images/sportsConnectLogoLatest.png'),
       theme: LoginTheme(
-        titleStyle: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
+        logoWidth: 200, 
         pageColorDark: Colors.blue,
         pageColorLight: Colors.blue.shade300,
       ),
-      logo: const AssetImage('assets/images/sportsLogo-Photoroom.png'),
       onLogin: cubit.signIn,
       onSignup: cubit.signUp,
       userValidator: (value) {
@@ -37,20 +32,18 @@ class GuestScreen extends StatelessWidget {
       },
       passwordValidator: (value) {
         if (value == null || value.length < 5) {
-          return "Please must be at least 5 chars";
+          return "Password must be at least 5 characters";
         }
         return null;
       },
       onSubmitAnimationCompleted: () {
-        // Navigator.of(context).pushReplacementNamed(ChatListScreen.routeName);
-                Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => const Dashboard(),
-            ));
-
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Dashboard(),
+          ),
+        );
       },
-      
       onRecoverPassword: (_) async => null,
     );
   }

@@ -47,7 +47,7 @@ class _AllDealsPageState extends State<AllDealsPage> {
 
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/api/view/deals'),
+        Uri.parse('$baseUrl:8000/api/view/deals'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -69,7 +69,9 @@ class _AllDealsPageState extends State<AllDealsPage> {
 
 
 Widget _buildDealCard(Map<String, dynamic> deal) {
-  final imageUrl = 'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+   final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+  final imageUrl = '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
 
   return Card(
     child: ListTile(
@@ -93,7 +95,7 @@ Widget _buildDealCard(Map<String, dynamic> deal) {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Price: \$${deal['price'] ?? 'N/A'}'),
+          Text('Price: \RM ${deal['price'] ?? 'N/A'}'),
           Text(deal['description'] ?? 'No description available'),
           Text('Seller: ${deal['user']['name'] ?? 'Unknown'}'),
         ],

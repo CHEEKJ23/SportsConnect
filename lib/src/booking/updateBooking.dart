@@ -72,7 +72,7 @@ Future<void> _selectTime(BuildContext context, bool isStartTime) async {
   Future<void> _updateBooking() async {
      final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final url = Uri.parse('$baseUrl/api/modifyBookings/${widget.bookingId}');
+    final url = Uri.parse('$baseUrl:8000/api/modifyBookings/${widget.bookingId}');
        final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('authToken'); 
     final response = await http.put(

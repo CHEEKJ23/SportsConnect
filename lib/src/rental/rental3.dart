@@ -43,7 +43,7 @@ class ItemDetailPage extends StatelessWidget {
   Future<void> rentEquipment(BuildContext context) async {
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    final url = Uri.parse('$baseUrl/api/equipment-rental/rent');
+    final url = Uri.parse('$baseUrl:8000/api/equipment-rental/rent');
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('authToken');
@@ -176,6 +176,8 @@ ElevatedButton(
 
   @override
   Widget build(BuildContext context) {
+    final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -194,7 +196,7 @@ ElevatedButton(
             Stack(
               children: [
                 Image.network(
-                  'http://10.0.2.2/sportsConnectAdmin/sportsConnect/public/images/${equipmentDetails['image_path'] ?? 'default.jpg'}', 
+                  '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${equipmentDetails['image_path'] ?? 'default.jpg'}', 
                 width: double.infinity,
                 height: 400,
                 fit: BoxFit.cover,
