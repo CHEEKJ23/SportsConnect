@@ -28,6 +28,8 @@ class AllDealsPage extends StatefulWidget {
 
 class _AllDealsPageState extends State<AllDealsPage> {
   List<dynamic> deals = [];
+  TextEditingController _searchController = TextEditingController();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -64,6 +66,56 @@ class _AllDealsPageState extends State<AllDealsPage> {
       }
     } catch (e) {
       print('An error occurred: $e');
+    }
+  }
+
+Future<void> searchDeals(String query) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('authToken');
+    final dioClient = DioClient();
+    final baseUrl = dioClient.baseUrl;
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Authentication token not found. Please log in again.')),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('$baseUrl:8000/api/search-deals?query=$query'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          deals = data['data']; // Assuming the deals are in the 'data' field
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load deals.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred: $e')),
+      );
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -167,19 +219,58 @@ void _showImageDialog(BuildContext context, String imageUrl) {
     return users.firstWhere((user) => user.id == userId);
   }
 
-  @override
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: Text('Deals')),
+  //     body: deals.isEmpty
+  //         ? Center(child: Text('No deals available.'))
+  //         : ListView.builder(
+  //             itemCount: deals.length,
+  //             itemBuilder: (context, index) {
+  //               final deal = deals[index];
+  //               return _buildDealCard(deal);
+  //             },
+  //           ),
+  //   );
+  // }
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Deals')),
-      body: deals.isEmpty
-          ? Center(child: Text('No deals available.'))
-          : ListView.builder(
-              itemCount: deals.length,
-              itemBuilder: (context, index) {
-                final deal = deals[index];
-                return _buildDealCard(deal);
-              },
+      appBar: AppBar(title: Text('Search Deals')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Search Deals',
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    searchDeals(_searchController.text);
+                  },
+                ),
+              ),
             ),
+            SizedBox(height: 20),
+            isLoading
+                ? CircularProgressIndicator()
+                : Expanded(
+                    child: deals.isEmpty
+                        ? Center(child: Text('No deals available.'))
+                        : ListView.builder(
+                            itemCount: deals.length,
+                            itemBuilder: (context, index) {
+                              final deal = deals[index];
+                              return _buildDealCard(deal);
+                            },
+                          ),
+                  ),
+          ],
+        ),
+      ),
     );
   }
 }

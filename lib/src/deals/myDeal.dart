@@ -300,6 +300,105 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
     );
   }
 
+
+  Widget _buildRejectedDealCard(Map<String, dynamic> deal) {
+    final status = deal['status']?.toString().toLowerCase() ?? 'pending';
+     final dioClient = DioClient();
+  final baseUrl = dioClient.baseUrl;
+    final imageUrl = '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${deal['image_path']}';
+
+
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(16.0),
+        leading: deal['image_path'] != null
+            ? Image.network(
+                imageUrl,
+                width: 50.0,
+                height: 50.0,
+                fit: BoxFit.cover,
+              )
+            : Icon(Icons.image, size: 50.0),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Text(
+                deal['title'] ?? 'No Title',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                ),
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              decoration: BoxDecoration(
+                color: _getStatusColor(status),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Text(
+                status.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 8.0),
+            Text(
+              'Price: \$${deal['price'] ?? 'N/A'}',
+              style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              'Location: ${deal['location'] ?? 'Unknown'}',
+              style: TextStyle(
+                color: Colors.grey[600],
+              ),
+            ),
+            SizedBox(height: 4.0),
+            Text(
+              'Reason: ${deal['reason'] ?? 'No Title'}',
+              style: TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit, color: Colors.blue),
+              onPressed: () => editDeal(deal['dealID'], deal),
+            ),
+            IconButton(
+              icon: Icon(Icons.delete, color: Colors.red),
+              onPressed: () => deleteDeal(deal['dealID']),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   Widget _buildDealsList(String status) {
     final filteredDeals = deals.where((deal) => 
       (deal['status']?.toString().toLowerCase() ?? 'pending') == status.toLowerCase()
@@ -334,6 +433,43 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
             itemBuilder: (context, index) => _buildDealCard(filteredDeals[index]),
           );
   }
+
+
+  Widget _buildRejectedDealsList(String status) {
+    final filteredDeals = deals.where((deal) => 
+      (deal['status']?.toString().toLowerCase() ?? 'pending') == status.toLowerCase()
+    ).toList();
+    
+    return filteredDeals.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  status == 'pending' ? Icons.pending :
+                  status == 'approved' ? Icons.check_circle :
+                  Icons.cancel,
+                  size: 64.0,
+                  color: Colors.grey,
+                ),
+                SizedBox(height: 16.0),
+                Text(
+                  'No ${status.toLowerCase()} deals',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          )
+        : ListView.builder(
+            padding: EdgeInsets.all(8.0),
+            itemCount: filteredDeals.length,
+            itemBuilder: (context, index) => _buildRejectedDealCard(filteredDeals[index]),
+          );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +506,7 @@ class _MyDealsPageState extends State<MyDealsPage> with SingleTickerProviderStat
             children: [
               _buildDealsList('pending'),
               _buildDealsList('approved'),
-              _buildDealsList('rejected'),
+              _buildRejectedDealsList('rejected'),
             ],
           ),
         ),

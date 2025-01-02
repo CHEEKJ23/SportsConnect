@@ -106,6 +106,42 @@ class _RewardScreenState extends State<RewardScreen> {
     }
   }
 
+
+
+  void _showImageDialog(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image, size: 100);
+                  },
+                ),
+                SizedBox(height: 16),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Close'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final dioClient = DioClient();
@@ -127,17 +163,35 @@ class _RewardScreenState extends State<RewardScreen> {
 
                 return Card(
                   child: ListTile(
-                    leading: gift['image_path'] != null
-                        ? Image.network(
-                            imageUrl,
-                            width: 50,
-                            height: 50,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(Icons.broken_image, size: 50);
-                            },
-                          )
-                        : Icon(Icons.image, size: 50),
+                    // leading: gift['image_path'] != null
+                    //     ? Image.network(
+                    //         imageUrl,
+                    //         width: 50,
+                    //         height: 50,
+                    //         fit: BoxFit.cover,
+                    //         errorBuilder: (context, error, stackTrace) {
+                    //           return Icon(Icons.broken_image, size: 50);
+                    //         },
+                    //       )
+                    //     : Icon(Icons.image, size: 50),
+                    leading: GestureDetector(
+          onTap: () {
+            if (gift['image_path'] != null) {
+              _showImageDialog(context, imageUrl);
+            }
+          },
+          child: gift['image_path'] != null
+              ? Image.network(
+                  imageUrl,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image, size: 50);
+                  },
+                )
+              : Icon(Icons.image, size: 50),
+        ),
                     title: Text(gift['name']),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

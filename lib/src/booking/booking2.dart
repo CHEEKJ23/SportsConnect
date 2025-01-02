@@ -65,7 +65,7 @@ SportCenterList(this.sportsCenters);
                         SizedBox(height: 4.0),
                         // Price Range
                         Text(
-                          'RM ' + (item['price'] ?? 'N/A'),
+                          (item['price'] ?? 'N/A'),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,
