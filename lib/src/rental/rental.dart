@@ -79,6 +79,19 @@ class _RentalPageState extends State<RentalPage> {
   }
 
   Future<void> checkAvailability() async {
+
+bool _isTimeRestricted(TimeOfDay? time) {
+  if (time == null) return false; 
+
+  final int hour = time.hour;
+  return (hour >= 22 || hour < 8);
+}
+     if (_isTimeRestricted(startTime) || _isTimeRestricted(endTime)) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Rentals are not allowed between 10 PM and 8 AM.')),
+    );
+    return;
+  }
       final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
     final url = Uri.parse('$baseUrl:8000/api/equipment-rental/check-availability');

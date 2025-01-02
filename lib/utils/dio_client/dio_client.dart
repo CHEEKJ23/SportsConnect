@@ -22,8 +22,8 @@ class DioClient {
     final dio = Dio(
       BaseOptions(
         baseUrl: "http://10.0.2.2",
-        // baseUrl: "http://192.168.60.132",
-
+        // baseUrl: "http://192.168.58.121",
+//php artisan serve --host=0.0.0.0 --port=8000
 
         receiveTimeout: 30000, // 30 seconds
         connectTimeout: 30000,
@@ -51,4 +51,4 @@ class DioClient {
     return dio;
   }
   
-}
+} 

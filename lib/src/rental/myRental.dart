@@ -251,6 +251,10 @@ class RentalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DateTime rentalEndTime = DateTime.parse("${rental['date']} ${rental['endTime']}");
+    bool canReturn = DateTime.now().isAfter(rentalEndTime)&& rental['rentalStatus'] != 'Completed';
+
+
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       elevation: 4,
@@ -265,7 +269,7 @@ class RentalCard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  rental['rentalStatus'] == 'ongoing'
+                  rental['rentalStatus'] == 'ongoing' 
                       ? Icons.timelapse
                       : Icons.check_circle,
                   color: rental['rentalStatus'] == 'ongoing'
@@ -299,6 +303,10 @@ class RentalCard extends StatelessWidget {
               'Quantity: ${rental['quantity_rented']}',
               style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
+            Text(
+              'Late Fee: ${rental['lateFee']}',
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+            ),
             if (isOngoing) ...[
               SizedBox(height: 12),
               Row(
@@ -307,22 +315,30 @@ class RentalCard extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                      Navigator.push(
-   context,
-   MaterialPageRoute(builder: (context) => RentalCountdown(rentalDate: rental['date'], startTime: rental['startTime'], endTime: rental['endTime'])), 
- );
+                  context,
+                  MaterialPageRoute(builder: (context) => RentalCountdown(rentalDate: rental['date'], startTime: rental['startTime'], endTime: rental['endTime'])), 
+                );
                     },
                     child: Text("View Countdown"),
                   ),
                   SizedBox(width: 8),
-                 ElevatedButton(
-                onPressed: () {
-                  if (onReturn != null) {
-                    onReturn!(rental['rentalID'].toString()); 
-                  }
-                },
+              //    ElevatedButton(
+              //   onPressed: () {
+              //     if (onReturn != null) {
+              //       onReturn!(rental['rentalID'].toString()); 
+              //     }
+              //   },
 
-                child: Text("Return"),
-              ),
+              //   child: Text("Return"),
+              // ),
+               ElevatedButton(
+                    onPressed: canReturn ? () {
+                      if (onReturn != null) {
+                        onReturn!(rental['rentalID'].toString());
+                      }
+                    } : null, // Disable button if rental hasn't finished
+                    child: Text("Return"),
+                  ),
                 ],
               ),
             ],

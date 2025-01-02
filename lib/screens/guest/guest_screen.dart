@@ -16,11 +16,18 @@ class GuestScreen extends StatelessWidget {
     return FlutterLogin(
       scrollable: true,
       hideForgotPasswordButton: true,
-      logo: const AssetImage('assets/images/sportsConnectLogoLatest.png'),
+      title: 'SportsConnect',
+      logo: const AssetImage('assets/images/newLogo.png'),
       theme: LoginTheme(
-        logoWidth: 200, 
-        pageColorDark: Colors.blue,
-        pageColorLight: Colors.blue.shade300,
+        logoWidth: 0.9, 
+        pageColorDark: Colors.red,
+        pageColorLight: Colors.red.shade300,
+        titleStyle: TextStyle(
+      color: Colors.black, 
+      fontSize: 30.0, 
+      fontWeight: FontWeight.bold, 
+      fontFamily: 'Poppins', 
+    ),
       ),
       onLogin: cubit.signIn,
       onSignup: cubit.signUp,
