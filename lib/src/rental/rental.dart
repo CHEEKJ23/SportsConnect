@@ -88,7 +88,7 @@ bool _isTimeRestricted(TimeOfDay? time) {
 }
      if (_isTimeRestricted(startTime) || _isTimeRestricted(endTime)) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Rentals are not allowed between 10 PM and 8 AM.')),
+      SnackBar(content: Text('Rentals are not allowed between 10 PM to 8 AM.')),
     );
     return;
   }
@@ -191,6 +191,8 @@ bool _isTimeRestricted(TimeOfDay? time) {
                 } else {
                   setState(() {
                     sportsCenters = [];
+                    //this is to clear the selected sport center
+                    selectedSportCenter = null;
                   });
                 }
               },
@@ -198,7 +200,10 @@ bool _isTimeRestricted(TimeOfDay? time) {
             if (sportsCenters.isNotEmpty)
               DropdownButton<String>(
                 hint: Text('Select Sport Center'),
-                value: selectedSportCenter,
+                // value: selectedSportCenter,
+                 value: sportsCenters.any((center) => center['name'] == selectedSportCenter)
+        ? selectedSportCenter
+        : null,
                 onChanged: (value) {
                   setState(() {
                     selectedSportCenter = value;

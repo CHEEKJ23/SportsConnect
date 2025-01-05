@@ -175,19 +175,20 @@ ElevatedButton(
   }
 
   @override
-  Widget build(BuildContext context) {
-    final dioClient = DioClient();
+Widget build(BuildContext context) {
+  final dioClient = DioClient();
   final baseUrl = dioClient.baseUrl;
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            SizedBox(width: 8),
-            Text(equipmentDetails['name']),
-          ],
-        ),
+  return Scaffold(
+    appBar: AppBar(
+      title: Row(
+        children: [
+          SizedBox(width: 8),
+          Text(equipmentDetails['name']),
+        ],
       ),
-      body: Padding(
+    ),
+    body: SingleChildScrollView( // Wrap the Column with SingleChildScrollView
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -197,27 +198,17 @@ ElevatedButton(
               children: [
                 Image.network(
                   '$baseUrl/sportsConnectAdmin/sportsConnect/public/images/${equipmentDetails['image_path'] ?? 'default.jpg'}', 
-                width: double.infinity,
-                height: 400,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: double.infinity,
-                    height: 200,
-                    color: Colors.grey[300],
-                    child: Center(child: Text("Image not available")),
-                  );
-                },
-              ),
-                Positioned(
-                  top: 170,
-                  left: 16,
-                  child: Icon(Icons.arrow_back_ios, color: Colors.black),
-                ),
-                Positioned(
-                  top: 170,
-                  right: 16,
-                  child: Icon(Icons.arrow_forward_ios, color: Colors.black),
+                  width: double.infinity,
+                  height: 400,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 200,
+                      color: Colors.grey[300],
+                      child: Center(child: Text("Image not available")),
+                    );
+                  },
                 ),
               ],
             ),
@@ -307,7 +298,7 @@ ElevatedButton(
                 ),
               ],
             ),
-            Spacer(),
+            SizedBox(height: 16), // Add some space before the button
             // Rent button
             SizedBox(
               width: double.infinity,
@@ -328,8 +319,9 @@ ElevatedButton(
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 

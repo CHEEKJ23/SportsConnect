@@ -7,56 +7,66 @@ class EquipmentList extends StatelessWidget {
 
   EquipmentList({Key? key, required this.availableEquipment, required this.rentalDetails}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Available Equipment'),
-      ),
-      body: ListView.builder(
-        itemCount: availableEquipment.length,
-        itemBuilder: (context, index) {
-          final equipment = availableEquipment[index];
-          final equipmentID = equipment['equipmentID'] as int?;
-
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    equipment['name'] ?? 'Unknown',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16.0,
-                      color: Colors.grey[800],
-                    ),
-                  ),
-                  SizedBox(height: 4.0),
-                  Text(
-                    'Available: ${equipment['quantity_available'] ?? 'N/A'}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  ElevatedButton(
-                    onPressed: equipmentID != null
-                        ? () => navigateToItemDetailPage(context, equipment, rentalDetails)
-                        : null, // Disable button if ID is null
-                    child: Text('View Details'),
-                  ),
-                ],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Available Equipment'),
+    ),
+    body: availableEquipment.isEmpty
+        ? Center(
+            child: Text(
+              'Equipment not found',
+              style: TextStyle(
+                fontSize: 18.0,
+                color: Colors.grey[600],
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          )
+        : ListView.builder(
+            itemCount: availableEquipment.length,
+            itemBuilder: (context, index) {
+              final equipment = availableEquipment[index];
+              final equipmentID = equipment['equipmentID'] as int?;
+
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        equipment['name'] ?? 'Unknown',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16.0,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                      SizedBox(height: 4.0),
+                      Text(
+                        'Available: ${equipment['quantity_available'] ?? 'N/A'}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      SizedBox(height: 8.0),
+                      ElevatedButton(
+                        onPressed: equipmentID != null
+                            ? () => navigateToItemDetailPage(context, equipment, rentalDetails)
+                            : null, // Disable button if ID is null
+                        child: Text('View Details'),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+  );
+}
 
   void navigateToItemDetailPage(BuildContext context, Map<String, dynamic> equipment, Map<String, dynamic> rentalDetailsMap) {
     final rentalDetails = RentalDetails(

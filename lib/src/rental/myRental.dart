@@ -252,7 +252,7 @@ class RentalCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime rentalEndTime = DateTime.parse("${rental['date']} ${rental['endTime']}");
-    bool canReturn = DateTime.now().isAfter(rentalEndTime)&& rental['rentalStatus'] != 'Completed';
+    bool canReturn = DateTime.now().isAfter(rentalEndTime)&& rental['rentalStatus'] != 'Completed'&& rental['rentalStatus'] != 'Pending Return'&& rental['rentalStatus'] != 'Ongoing';
 
 
     return Card(
