@@ -89,7 +89,7 @@ Widget build(BuildContext context) {
        
 
               return Container(
-                width: 180, 
+                width: 250, 
                 margin: const EdgeInsets.symmetric(horizontal: 8.0),
                 decoration: BoxDecoration(
                   color: Colors.white,

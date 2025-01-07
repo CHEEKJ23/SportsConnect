@@ -312,6 +312,7 @@ Widget buildJoinedActivityList(List<dynamic> activities, String emptyMessage) {
             final date = activity['date'] ?? 'Unknown Date';
             final startTime = activity['startTime'] ?? 'Unknown Start Time';
             final endTime = activity['endTime'] ?? 'Unknown End Time';
+            final playerQuantity = activity['player_quantity'] ?? 'Unknown Player Quantity';
             final players = activity['players'] as List<dynamic> ?? [];
     final joinedUserNames = players.map((player) => player['name']).join(', ');
 
@@ -377,6 +378,13 @@ Widget buildJoinedActivityList(List<dynamic> activities, String emptyMessage) {
                       ),
                     ),
                     Text(
+                      'Player Quantity: $playerQuantity',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    Text(
                       'Joined Users: $joinedUserNames',
                       style: TextStyle(
                         fontSize: 14,
@@ -427,7 +435,7 @@ Widget buildSelfCreatedActivityList(List<dynamic>? activities, String emptyMessa
             final endTime = activity['endTime'] ?? 'Unknown End Time';
             final players = activity['players'] as List<dynamic>? ?? [];
             final joinedUserNames = players.map((player) => player['name']).join(', ');
-
+            final playerQuantity = activity['player_quantity'] ?? 'Unknown Player Quantity';
             return Card(
               margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               elevation: 4,
@@ -483,6 +491,13 @@ Widget buildSelfCreatedActivityList(List<dynamic>? activities, String emptyMessa
                     ),
                     Text(
                       'End Time: $endTime',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    Text(
+                      'Player Quantity: $playerQuantity',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey[700],

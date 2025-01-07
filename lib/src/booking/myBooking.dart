@@ -553,7 +553,7 @@ Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
                 ),
                 ElevatedButton(
                    onPressed: () {
-                    // Navigate to UpdateBookingPage
+                   
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -568,6 +568,9 @@ Widget _buildBookingCard(dynamic booking, {required bool isUpcoming}) {
                             hour: int.parse(booking['endTime'].split(':')[0]),
                             minute: int.parse(booking['endTime'].split(':')[1]),
                           ),
+                          initialCourtId: booking['court_number'],
+                          sportCenterId: booking['sport_center_id'],
+                          selectedSport: booking['sport_type_name'],
                         ),
                       ),
                     );

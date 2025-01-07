@@ -168,7 +168,8 @@ bool _isTimeRestricted(TimeOfDay? time) {
       appBar: AppBar(
         title: Text('Rent Equipment'),
       ),
-      body: Padding(
+    body: SingleChildScrollView( 
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -320,7 +321,8 @@ bool _isTimeRestricted(TimeOfDay? time) {
           ],
         ),
       ),
-    );
+      ),
+      );
   }
     TimeOfDay _adjustMinutes(TimeOfDay time) {
     int adjustedMinutes = (time.minute < 15 || time.minute >= 45) ? 0 : 30;

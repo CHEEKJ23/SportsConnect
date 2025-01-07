@@ -21,8 +21,8 @@ class DioClient {
   Dio createDioClient() {
     final dio = Dio(
       BaseOptions(
-        // baseUrl: "http://10.0.2.2",
-        baseUrl: "http://192.168.0.108",
+        baseUrl: "http://10.0.2.2",
+        // baseUrl: "http://192.168.0.107",
 //php artisan serve --host=0.0.0.0 --port=8000
 
         receiveTimeout: 30000, // 30 seconds
