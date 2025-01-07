@@ -24,7 +24,7 @@ class DioClient {
         baseUrl: "http://10.0.2.2",
         // baseUrl: "http://192.168.0.107",
 //php artisan serve --host=0.0.0.0 --port=8000
-
+//done
         receiveTimeout: 30000, // 30 seconds
         connectTimeout: 30000,
         sendTimeout: 30000,
