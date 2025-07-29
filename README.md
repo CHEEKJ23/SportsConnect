@@ -45,10 +45,4 @@ We follow the **Rapid Application Development (RAD)** methodology:
 
 ---
 
-## 🔧 Installation & Setup
 
-### 💻 Backend (Laravel)
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/your-username/sportsconnect.git
-   cd sportsconnect/backend
